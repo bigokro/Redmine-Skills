@@ -1,0 +1,34 @@
+<div class="contextual">
+<%= link_to_if_globally_authorized(l(:button_edit), {:action => 'edit', :id => @skill}, :class => 'icon icon-edit', :accesskey => accesskey(:edit)) %>
+</div>
+<h2><%=l(:label_skill)%>: <%= @skill.name %></h2> 
+	
+<div class="issue details">
+	<h3 <%= "class='inactive'" unless @skill.active? %>><%=h @skill.name%></h3>
+	<p class="author">
+		<%= h @skill.description %>
+	</p>
+
+<table width="100%">
+<tr>
+    <td style="width:15%" class="status"><b><%=l(:field_active)%>:</b></td><td style="width:35%" class="<%= @skill.active? ? "status" : "inactive" %>"><%= @skill.active? ? l(:general_text_Yes) : l(:general_text_No) %></td>
+    <td style="width:15%" class="start-date"></td><td style="width:35%"></td>
+</tr>
+</table>
+
+<hr/>
+<p><%= textilizable @skill.details%></p>
+
+</div>
+
+<div class="splitcontentright">
+<% content_for :sidebar do %>
+	<!-- TODO: Show in hierarchy (at least parent and immediate children) -->
+<% end %>
+
+<% content_for :header_tags do %>
+	<!-- TODO: a stylsheet for the inactive styles -->
+    <!-- %= stylesheet_link_tag 'arch_decisions', :plugin => 'redmine_arch_decisions' % -->
+<% end %>
+
+<% html_title(l(:label_skill) + ": " + @skill.name) -%>

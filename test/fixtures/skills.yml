@@ -1,0 +1,27 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+valid:
+  name: Valid Skill 1
+  description: This is a valid skill
+  details: This is a valid skill, if you must know the truth
+  active: true 
+  
+valid_name_max_length:
+  name: A skill with exactly the max length name
+  description: This is a skill with exactly the maximum length name, if you must know the truth. In fact its description is also exactly the maximum length allowed, which would be pretty remarkable if it weren't so obviously intentional. Next time I'll be more discreet.
+  details: This is a skill with exactly the max length name, if you must know the truth
+  active: true 
+
+sub_skill:
+  name: Sub-skill
+  description: This is a sub-skill of the valid skill
+  details: This is a sub-skill, if you must know the truth
+  super_skill: valid
+  active: true 
+
+inactive:
+  name: Inactive Skill
+  description: This is an inactive skill
+  details: This is an inactive skill, if you must know the truth
+  active: false
+
+  

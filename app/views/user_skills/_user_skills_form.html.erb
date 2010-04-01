@@ -1,0 +1,5 @@
+<div class="issue details" id="user_skills">
+	<%= render :partial => 'user_skill_evaluations/form', :locals => { :user => @user } %>
+	<%= render :partial => 'user_skills/user_skills', :locals => { :user => @user, :is_form => true } %>
+	<%= render :partial => 'user_skill_evaluations/user_skill_evaluations', :locals => { :user => @user, :user_skill_evaluations => @user_skill_evaluations } %>
+</div>

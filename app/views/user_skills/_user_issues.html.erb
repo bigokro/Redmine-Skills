@@ -1,0 +1,30 @@
+<table class="list">
+  <thead><tr>
+	<th><%= l(:label_project) %></th>
+	<th><%= l(:label_issue) %></th>
+  </tr></thead>
+  <tbody>
+<% for p in @projects %>
+  <tr class="<%= cycle("odd", "even") %>">
+  	<td>
+  		<%= link_to p.name, 
+			{ :controller => 'projects', :action => 'show', :id => p }
+		%>
+	</td>
+	<td></td>
+  </tr>
+	<% for i in p.issues %>
+	  <% if i.assigned_to == @user %>
+	  <tr class="<%= cycle("odd", "even") %>">
+		<td></td>
+	  	<td>
+	  		<%= link_to "#{i.tracker.name} ##{i.id} (#{i.status}): #{i.subject}", 
+				{ :controller => 'issues', :action => 'show', :id => i }
+			%>
+		</td>
+	  </tr>
+  	  <% end %>
+	<% end %>
+<% end %>
+  </tbody>
+</table>

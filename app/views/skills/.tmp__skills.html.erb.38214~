@@ -1,0 +1,17 @@
+<% form_tag({:action => 'plugin'}) do |f| %>
+
+<fieldset class="box" id="general_configs"><legend><%=l(:text_select_general_configs)%></legend>
+
+<p><!-- %= setting_select :action_on_insufficient_skills, [['None', 'none'], ['Warn', 'warn'], ['Don\'t assign', 'block']] % -->
+  <!-- %= check_box_tag "settings[notify_on_new_ad]", Setting["plugin_redmine_arch_decisions"]["notify_on_new_ad"], Setting --> 
+	<%= f.select :action_on_insufficient_skills, [['None', 'none'], ['Warn', 'warn'], ['Don\'t assign', 'block']], { :required => true } %> 
+</p>
+	
+</fieldset>
+
+<fieldset class="box" id="skills"><legend><%=l(:text_all_skills)%></legend>
+	<% Skills.all.each do |skill| %>
+	<p><%= skill.name %></p>
+	<% end %>
+</fieldset>
+<% end %>

@@ -1,0 +1,38 @@
+<!-- TODO: :view_own_skills or :manage_user_skills -->
+<!-- Problem: no project associated with this page, and therefore no role! -->
+<!-- % if authorize_for(:view_own_skills) % -->
+
+	<div>
+		<br/>
+		<h3><%=l(:label_user_skill_evaluation_plural)%></h3>
+		<table class="list">
+		  <thead>
+			  <tr>
+			  	<th><%= l(:label_evaluation_date) %></th>
+				<th><%= l(:label_evaluator) %></th>
+				<th><%= l(:label_assessment) %></th>
+				<th><%= l(:label_user_skill_changes) %></th>
+			  </tr>
+		  </thead>
+		  <tbody>
+			<% @user_skill_evaluations.each do |eval| %>
+			  <tr class="<%= cycle("odd", "even") %>">
+			  	<td><%= eval.created_on %></td>
+				<td><%= link_to eval.evaluator.name, :controller => 'users', :action => :show, :id => @user %></td>
+				<td><%= text = h(eval.assessment); text.length > 100 ? text[0..96] + '...' : text %></td>
+				<td>
+					<ul>
+						<% eval.user_skill_changes.each do |change| %>
+							<li><%= l("text_user_skill_"+change.type.downcase, :skill => change.skill.name, :old_level => change.old_level, :new_level => change.new_level) %></li>
+						<% end %>
+					</ul>
+				</td>
+			  </tr>
+			<% end %>
+			<% if @user_skill_evaluations.nil? || @user_skill_evaluations.length == 0 %>
+			 <tr><td colspan="4" style="text-align: center;"><%= l(:text_no_user_skill_evaluations)%></td></tr>
+			<% end %>
+		  </tbody>
+		</table>
+	</div>
+	

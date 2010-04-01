@@ -1,0 +1,41 @@
+en:
+    project_module_skills: Skills
+
+    field_action_on_insufficient_skills: Action to take when an assignee has insufficient skills
+    field_active: Active
+    field_level: Level
+    field_evaluator: Evaluator
+    field_user_skill_changes: Changes to user skills
+    field_assessment: Evaluation
+    
+    label_skill: Skill
+    label_skills: Skills
+    label_new_skill: New skill
+    label_skills_required: Required skills
+    label_skills_my: My skills
+    label_skills_user: User skills
+    label_skills_project_config: Project-wide configurations
+    label_description: Description
+    label_level: Skill level
+    label_project_skills_required: Required skills for this project
+    label_max_level_required: Maximum level required
+    label_user_skill_evaluation_plural: Skill evaluations
+    label_issue_id: Related Redmine issue id (if relevant)
+    label_related_issue: Related issue
+    label_evaluator: Evaluator
+    label_evaluation_date: Date of evaluation
+    label_user_skill_changes: Changes
+    label_assessment: Assessment
+    
+    button_manage_user_skills: Submit an evaluation
+    button_submit_evaluation: Submit evaluation
+
+    text_required_skill_remove_confirmation: Remove required skill '{{name}}' from this issue ?
+    text_user_skill_destroy_confirmation: Remove skill '{{name}}' from this user ?
+    text_skill_destroy_confirmation: Are you sure you want to delete the skill '{{name}}' ?
+    text_no_user_skill_evaluations: This user currently has no skill evaluations
+    text_user_skill_addition: "{{skill}} added at level {{new_level}}"
+    text_user_skill_deletion: "{{skill}} removed (was level {{old_level}})"
+    text_user_skill_promotion: "{{skill}} promoted from level {{old_level}} to {{new_level}}"
+    text_user_skill_demotion: "{{skill}} demoted from level {{old_level}} to {{new_level}}"
+    

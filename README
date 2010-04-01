@@ -1,0 +1,31 @@
+OVERVIEW
+
+The Skills plugin adds the concept of required skills to the Redmine platform.
+Issues can be configured to require a specific set of skills (e.g. "JQuery", "Struts").
+Skills also include varying levels of knowledge (e.g. Level 1 - Beginner; Level 5 - Master)
+that may be required to successfully resolve/complete an issue. Redmine users can then be associated 
+with skills and appropriate skill levels. If a user does not possess the required skills, then the 
+plugin can prevent them from being assigned to the issue.
+
+VERSION: 0.0.1
+
+REQUIREMENTS
+* ruby script/plugin install auto_complete
+
+RELEASE NOTES
+
+* First version - unreleased
+
+CURRENT FEATURES
+
+* List Arch Decisions (currently only manually, via the /arch_decisions URL)
+
+ROADMAP
+
+* Allow tagging of ADs and Factors for easy and flexible categorization and search
+
+KNOWN ISSUES
+
+There is an official issue tracker for this plug-in. 
+Please refer to http://opensource.integritas.com.br/projects/redmine-skills/issues for the complete list.
+

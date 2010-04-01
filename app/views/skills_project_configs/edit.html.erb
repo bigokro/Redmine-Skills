@@ -1,0 +1,12 @@
+<% labelled_tabular_form_for :skills_project_config, @skill_project_config, :url => { :action => "edit", :id => @project } do |f| %>
+<%= render :partial => 'form', :locals => { :f => f } %>
+<%= submit_tag l(:button_save), :tabindex => autotab %>
+<% end %>
+
+<p>&nbsp;</p>
+
+<h2><%=l(:label_project_skills_required)%></h2>
+
+<%= render :partial => 'skills/list', :locals => { :skills => @skills } %>
+
+<% html_title(l(:label_skills)) -%>

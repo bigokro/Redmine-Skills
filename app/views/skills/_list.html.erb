@@ -1,0 +1,35 @@
+<% has_level = (!@skills.nil?) && (@skills.size > 0) && (!@skills[0].kind_of? Skill) %>
+
+<table class="list">
+  <thead><tr>
+	<th><%= l(:label_skill) %></th>
+<% if has_level %>
+	<th><%= l(:label_max_level_required) %></th>
+<% end %>
+	<th><%= l(:label_description) %></th>
+	<th></th>
+  </tr></thead>
+  <tbody>
+<% for s in @skills %>
+  <% skill = has_level ? s.skill : s %>
+  <tr class="<%= cycle("odd", "even") %>">
+  	<td>
+  		<%= link_to skill.name, 
+			{ :controller => 'skills', :action => 'show', :id => skill, :project_id => @project }, 
+			:title => h(skill.description)
+		%>
+	</td>
+<% if has_level %>
+	<td><%= s.level %></td>
+<% end %>
+  	<td><%=skill.description%></td>
+	<td align="center" style="width:10%">
+	    <small><%= link_to_if_authorized(l(:button_delete), 
+							{ :action => 'destroy', :project_id => @project, :id => skill}, 
+							:confirm => l(:text_skill_destroy_confirmation, :name => skill.name), 
+							:class => 'icon icon-del') %></small>
+ 	 </td>
+  </tr>
+<% end %>
+  </tbody>
+</table>

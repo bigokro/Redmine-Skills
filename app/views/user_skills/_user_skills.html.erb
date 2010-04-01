@@ -1,0 +1,42 @@
+<!-- TODO: :view_own_skills or :manage_user_skills -->
+<!-- Problem: no project associated with this page, and therefore no role! -->
+<!-- % if authorize_for(:view_own_skills) % -->
+
+<div id="show_skills">
+
+	<% if !@is_form && authorize_globally_for('user_skills', :show) %>
+		<h3><%=link_to l(:label_skills_user), :controller => 'user_skills', :action => :show, :user_id => @user %></h3>
+	<% else  %>
+		<h3><%=l(:label_skills_user)%></h3>
+	<% end %>
+
+	<% if @user.user_skills.any? %>
+
+		<table style="width:100%">
+		<% skillcount = 0 %>
+		<% numcols = 3 %>
+		<% @user.user_skills.sort_by{|s| s.skill.name}.each do |uskill| %>
+			<% skill = uskill.skill %>
+			<% if skillcount % numcols == 0 %>
+			  <tr>
+			<% end %>
+		    <td width="10%"><span style="white-space: nowrap">
+		    	<%= link_to skill.name, 
+							{ :controller => 'skills', :action => 'show', :id => skill, :project_id => @project }, 
+							:title => h(skill.description)
+				%>: <%= uskill.level %> 
+			</span></td>
+			<td>	</td>
+			<% if skillcount % numcols == (numcols-1) %>
+				</tr>
+			<% end %>
+			<% skillcount += 1 %>
+		<% end %>
+		<% if skillcount % numcols < (numcols-1) %>
+			<td colspan="<%= ((numcols-1) - (skillcount % numcols)) * 2 %>">	</td>
+		  </tr>
+		<% end %>
+		</table>
+	
+	<% end %>
+</div>

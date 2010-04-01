@@ -1,0 +1,11 @@
+<div id="skills_project_config_form">
+	
+<%= error_messages_for 'skills_project_config' %>
+<fieldset class="box"><legend><%=l(:label_skills_project_config)%></legend>
+
+<p>
+	<%= f.select :action_on_insufficient_skills, @skills_project_config.unskilled_action_options %>
+	<%= submit_tag l(:button_save) %>
+</p>
+</fieldset>
+</div>

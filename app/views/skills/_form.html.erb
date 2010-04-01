@@ -1,0 +1,21 @@
+<%= error_messages_for 'skill' %>
+
+<div class="box">
+<!--[form:skill]-->
+
+<p><%= f.text_field :name, :size => 20, :required => true, :tabindex => autotab %><br /><em><%= l(:text_caracters_maximum, Skill::NAME_MAX_SIZE) %></em></p>
+
+<p><%= f.text_field :description, :size => 100, :tabindex => autotab %><br /><em><%= l(:text_caracters_maximum, Skill::DESCRIPTION_MAX_SIZE) %></em></p>
+
+<p><%= f.text_area :details, :rows => 5, :class => 'wiki-edit', :tabindex => autotab %></p>
+
+<p>
+	<%= f.check_box :active, :tabindex => autotab %><br/>
+</p>
+
+<!-- TODO: modify place in hierarchy? -->
+
+<%= wikitoolbar_for 'skill_details' %>
+</div>
+
+<!--[eoform:skill]-->
