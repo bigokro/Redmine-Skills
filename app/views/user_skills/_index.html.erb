@@ -1,0 +1,24 @@
+<table class="list">
+  <thead><tr>
+	<th><%= l(:label_user) %></th>
+	<th></th>
+	<th></th>
+  </tr></thead>
+  <tbody>
+<% for u in @users %>
+  <tr class="<%= cycle("odd", "even") %>">
+  	<td>
+  		<%= link_to u.login, 
+			{ :controller => 'user_skills', :action => 'show', :user_id => u }, 
+			:title => h(u.name)
+		%>
+	</td>
+  	<td></td>
+  	<td></td>
+  </tr>
+<% end %>
+  </tbody>
+</table>
+
+<p><h3><%= l(:label_find_users) %></h3></p>
+<%= render :partial => 'skills_matcher/find_users', :locals => { :issue => @issue } %>

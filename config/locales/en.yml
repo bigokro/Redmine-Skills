@@ -26,9 +26,12 @@ en:
     label_evaluation_date: Date of evaluation
     label_user_skill_changes: Changes
     label_assessment: Assessment
+    label_find_users: Find Users
     
     button_manage_user_skills: Submit an evaluation
     button_submit_evaluation: Submit evaluation
+    button_find_users: Find users
+    button_find_issues: Find issues
 
     text_required_skill_remove_confirmation: Remove required skill '{{name}}' from this issue ?
     text_user_skill_destroy_confirmation: Remove skill '{{name}}' from this user ?
@@ -38,4 +41,6 @@ en:
     text_user_skill_deletion: "{{skill}} removed (was level {{old_level}})"
     text_user_skill_promotion: "{{skill}} promoted from level {{old_level}} to {{new_level}}"
     text_user_skill_demotion: "{{skill}} demoted from level {{old_level}} to {{new_level}}"
+    text_enter_criteria_for_search: Please enter criteria for your search
+    text_no_results_for_search: Your search returned no results
     

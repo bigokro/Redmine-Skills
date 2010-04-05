@@ -6,6 +6,8 @@ module SkillsMatcherHelper
     else
       issue.required_skills.each do |rs|
         # TODO: optional configuration for validating even trivial skills
+        # TODO: ignore inactive skills?
+        # TODO: allow user to qualify with related (parent/child) skills?
         if rs.level > 1
           return false if user.user_skills.nil?
           uskills = user.user_skills.select{|us| us.skill == rs.skill}

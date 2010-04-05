@@ -7,7 +7,8 @@ module SkillsHelper
 
   def skills_top_menu_tabs
     tabs = [{:name => 'skills', :controller => 'skills', :action => :index, :partial => 'skills/list', :label => :label_skills},
-            {:name => 'users', :controller => 'skills', :action => :manage_users, :partial => 'skills/manage_users', :label => :label_user_plural}
+            {:name => 'users', :controller => 'user_skills', :action => :index, :partial => 'user_skills/index', :label => :label_user_plural},
+            {:name => 'issues', :controller => 'skills_matcher', :action => :find_issues_for_user, :partial => 'skills_matcher/find_issues', :label => :label_issue_plural}
             ]
     tabs.select {|tab| authorize_globally_for(tab[:controller], tab[:action])}     
   end

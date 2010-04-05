@@ -6,6 +6,10 @@ class UserSkillsController < ApplicationController
   include SkillsHelper
   include UserSkillEvaluationsHelper
 
+  def index
+    @users = User.find(:all, :order => "login")
+  end
+
   def show
      @projects = user_projects
      @user_skill_evaluation = new_user_skill_evaluation_for_form @user
