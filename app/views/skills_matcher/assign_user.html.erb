@@ -1,0 +1,11 @@
+<h2><%= l(:label_qualified_assignees) %></h2> 
+	
+<div id="user_list">
+<% form_for :issue, @issue, :url => { :controller => "issues", :action => "update", :id => @issue } do |f| %>
+	<%= render :partial => 'skills_matcher/list_users', :locals => { :f => f } %>
+	<%= submit_tag l(:button_save), :tabindex => autotab %>
+<% end %>
+</div>
+
+
+<% html_title(l(:label_skills)) -%>

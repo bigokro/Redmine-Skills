@@ -9,6 +9,14 @@ class SkillsProjectConfig < ActiveRecord::Base
   
   validates_presence_of :project, :action_on_insufficient_skills
   
+  def validate_assignments?
+    return action_on_insufficient_skills != UNSKILLED_ACTION_NONE
+  end
+  
+  def block_assignments?
+    return action_on_insufficient_skills == UNSKILLED_ACTION_BLOCK
+  end
+  
   def unskilled_action_options
     SkillsProjectConfig.unskilled_action_options
   end

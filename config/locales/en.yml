@@ -27,6 +27,8 @@ en:
     label_user_skill_changes: Changes
     label_assessment: Assessment
     label_find_users: Find Users
+    label_find_assignees: Find qualified users
+    label_qualified_assignees: Qualified Users
     
     button_manage_user_skills: Submit an evaluation
     button_submit_evaluation: Submit evaluation
@@ -43,4 +45,6 @@ en:
     text_user_skill_demotion: "{{skill}} demoted from level {{old_level}} to {{new_level}}"
     text_enter_criteria_for_search: Please enter criteria for your search
     text_no_results_for_search: Your search returned no results
+    text_add_skill_block: The assigned user is unqualified for the new skill requirement. If you wish to change the requirements, you must first unassign this user.
+    text_add_skill_warn: The assigned user is unqualified for the new skill requirement. Are you sure you wish to make this change?
     

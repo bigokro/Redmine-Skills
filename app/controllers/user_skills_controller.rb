@@ -1,4 +1,6 @@
 class UserSkillsController < ApplicationController
+  unloadable
+  
   before_filter :load_model
   before_filter :authorize_global
 

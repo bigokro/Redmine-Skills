@@ -1,4 +1,6 @@
 class SkillsProjectConfigsController < ApplicationController
+  unloadable
+  
   menu_item :skills
 
   before_filter :load_project

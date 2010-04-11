@@ -1,9 +1,16 @@
+require 'dispatcher'
 require 'redmine'
 require 'required_skills_issue_patch'
 require 'show_issue_skills_hook'
 require 'user_skills_user_patch'
 require 'user_skill_evaluations_user_patch'
 require 'show_user_skills_hook'
+
+Dispatcher.to_prepare do
+  Issue.send(:include, IssuePatch)
+  User.send(:include, UserPatch)
+  User.send(:include, UserEvaluationPatch)
+end
 
 Redmine::Plugin.register :redmine_skills do
   name 'Skills plugin'

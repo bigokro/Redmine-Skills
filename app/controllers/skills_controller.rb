@@ -1,4 +1,6 @@
 class SkillsController < ApplicationController
+  unloadable
+  
   before_filter :load_skill, :except => [:index, :new]
   before_filter :authorize_global
 

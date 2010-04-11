@@ -1,5 +1,7 @@
 # Matches users to issues based on skill levels and required skills
 class SkillsMatcherController < ApplicationController
+  unloadable
+  
   helper :skills
   include SkillsHelper
   include SkillsMatcherHelper
@@ -70,6 +72,7 @@ class SkillsMatcherController < ApplicationController
 
   def refresh_matched_users
     respond_to do |format|
+      format.html { render :template => 'skills_matcher/assign_user' }
       format.js do
         render :update do |page|
             page.replace_html "matched_users", :partial => "skills_matcher/find_users"

@@ -1,4 +1,6 @@
 class UserSkillEvaluationsController < ApplicationController
+  unloadable
+  
   before_filter :authorize_global
 
   helper :skills

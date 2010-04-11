@@ -7,55 +7,8 @@
 <% end %>
 
 <p>&nbsp;</p>
-<table class="list">
-<% numcols = 1 %>
-<% if !@issue.nil? %>
-  <% numcols = 1 + @issue.required_skills.length %>
-  <thead>
-	<tr>
-		<th style="text-align: left;">
-	  		<%= link_to "#{@issue.tracker.name} ##{@issue.id} (#{@issue.status}): #{@issue.subject}", 
-				{ :controller => 'issues', :action => 'show', :id => @issue }
-			%>
-		</th>
-  		<% @issue.required_skills.each do |rs| %>
-		<th style="text-align: left;">
-			<%= rs.skill.name %>: <%= rs.level %>
-		</th>
-		<% end %>
-	</tr>
-  </thead>
-<% end %>
-
-  <tbody>
-<% if @matched_users.nil? %>
-		<tr><td colspan="<%= numcols %>" style="text-align: center;"><%= l(:text_enter_criteria_for_search) %></td></tr>
-<% elsif @matched_users.empty? %>
-		<tr><td colspan="<%= numcols %>" style="text-align: center;"><%= l(:text_no_results_for_search) %></td></tr>
-<% else %>
-	<% for u in @matched_users %>
-	  <tr class="<%= cycle("odd", "even") %>">
-	  	<td>
-	  		<%= link_to u.login, 
-				{ :controller => 'user_skills', :action => 'show', :user_id => u }, 
-				:title => h(u.name)
-			%>
-		</td>
-  		<% @issue.required_skills.each do |rs| %>
-		<% uskills = u.user_skills.select{|us| us.skill == rs.skill} %>
-		<td>
-			<% if uskills.nil? || uskills.empty? %>
-				<%= rs.skill.name %>: 1
-			<% else %>
-				<% us = uskills[0] %>
-				<%= us.skill.name %>: <%= us.level %>
-			<% end %>
-		</td>
-		<% end %>
-	  </tr>
-	<% end %>
-<% end %>
-  </tbody>
-</table>
+<div id="user_list">
+	<%= render :partial => 'skills_matcher/list_users', :locals => { :f => nil } %>
+</div>
 
 </div>

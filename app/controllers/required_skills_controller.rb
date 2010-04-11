@@ -1,9 +1,13 @@
 class RequiredSkillsController < ApplicationController
-
+  unloadable
+  
   before_filter :load_model
   before_filter :authorize
+  
+  include SkillsMatcherHelper
 
   def add
+    @action = params[:required_skill][:action]
     name = params[:required_skill][:name]
     skill = Skill.find_by_name(name)
     unless skill
@@ -13,8 +17,26 @@ class RequiredSkillsController < ApplicationController
     end
     level = params[:required_skill][:level].to_i
     @required_skill = RequiredSkill.new(:issue => @issue, :skill => skill, :level => level)
-    if @required_skill.save
-      @required_skill = nil
+
+    unless @issue.assigned_to.nil? || @action == "force"
+      config = SkillsProjectConfig.find_by_project_id(@project.id)
+      if !config.nil? && config.validate_assignments?
+        @issue.required_skills << @required_skill
+        unless user_is_qualified? @issue.assigned_to, @issue
+          if config.block_assignments?
+            @action = "block"
+          else
+            @action = "warn"
+          end
+          @issue.required_skills.delete @required_skill
+        end
+      end
+    end
+
+    unless @action == "block" || @action == "warn"
+      if @required_skill.save
+        @required_skill = nil
+      end
     end
     refresh_required_skills
   end

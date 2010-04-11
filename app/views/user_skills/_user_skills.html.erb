@@ -4,7 +4,7 @@
 
 <div id="show_skills">
 
-	<% if !@is_form && authorize_globally_for('user_skills', :show) %>
+	<% if !@is_form && User.current.allowed_to?({:controller => 'user_skills', :action => :show}, nil, :global => true) %>
 		<h3><%=link_to l(:label_skills_user), :controller => 'user_skills', :action => :show, :user_id => @user %></h3>
 	<% else  %>
 		<h3><%=l(:label_skills_user)%></h3>
