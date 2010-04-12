@@ -2,7 +2,7 @@ class RequiredSkillsController < ApplicationController
   unloadable
   
   before_filter :load_model
-  before_filter :authorize
+  before_filter :authorize, :except => ['assign_user']
   
   include SkillsMatcherHelper
 
@@ -48,6 +48,31 @@ class RequiredSkillsController < ApplicationController
     refresh_required_skills
   rescue ActiveRecord::RecordNotFound
     render_404
+  end
+  
+  def assign_user
+    # TODO: check permissions
+    user = User.find(params[:issue][:assigned_to_id])
+    unless (params[:membership].nil?)
+      @membership = Member.new(:principal => user)
+      @membership.attributes = params[:membership]
+      @membership.project = @project
+      if @membership.save
+        flash[:notice] = l(:notice_add_memberships_success, :name => user.login) + "<br/>"
+      else
+        flash[:error] = l(:notice_add_memberships_failure, :name => user.login) + "<br/>"
+      end
+    end
+    if @issue.project.assignable_users.include? user
+      # Unfortunately, I wasn't able to find a way to submit the change here and reuse all
+      # IssuesController logic without doing a redirect, which requires a second manual form submit.
+      #flash[:notice] = l(:notice_successful_assignment, :name => user.login)
+      flash[:notice] += l(:notice_confirm_assignment, :name => user.login)
+      redirect_to :controller => 'issues', :action => 'update', :id => @issue, :issue => { :assigned_to_id => user.id }
+      return
+    end
+    flash[:error] += l(:notice_unsuccessful_assignment, :name => user.login)
+    redirect_to :controller => 'skills_matcher', :action => :find_users_for_issue, :issue_id => @issue
   end
 
   private 

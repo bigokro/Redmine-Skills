@@ -1,14 +1,24 @@
+<% unless @issue.nil? %>
+	<h3><%= link_to "#{@issue.tracker.name} ##{@issue.id} (#{@issue.status}): #{@issue.subject}", 
+				{ :controller => 'issues', :action => 'show', :id => @issue }
+	%></h3>
+<% end %>
+
 <table class="list">
 <% isForm = !f.nil? %>
 <% numcols = 1 %>
-<% if !@issue.nil? %>
+<% unless @issue.nil? %>
   <% numcols = 1 + @issue.required_skills.length %>
   <thead>
 	<tr>
-		<th style="text-align: left;" <%= 'colspan="2"' if isForm %>>
-	  		<%= link_to "#{@issue.tracker.name} ##{@issue.id} (#{@issue.status}): #{@issue.subject}", 
-				{ :controller => 'issues', :action => 'show', :id => @issue }
-			%>
+		<% if isForm %>
+			<th>&nbsp;</th>
+		<% end %>
+		<th style="text-align: left;">
+			<%= l(:label_user) %>
+		</th>
+		<th style="text-align: left;">
+			<%= l(:label_project_role) %>
 		</th>
   		<% @issue.required_skills.each do |rs| %>
 		<th style="text-align: left;">
@@ -28,7 +38,10 @@
 	<% for u in @matched_users %>
 	  <tr class="<%= cycle("odd", "even") %>">
 	  	<% if isForm %>
-		  	<td><%= f.radio_button("assigned_to_id", u.id) %></td>
+		  	<td>
+	  			<%= f.radio_button("assigned_to_id", u.id, :onclick => "handleMembershipForm(#{u.id});") %>
+	  			<%= hidden_field_tag("membership_status_" + u.id.to_s, @issue.project.assignable_users.include?(u) ? "member" : "nonmember") %>
+			</td>
 		<% end %>
 	  	<td>
 	  		<%= link_to u.login, 
@@ -36,6 +49,11 @@
 				:title => h(u.name)
 			%>
 		</td>
+		<% unless @issue.nil? %>
+		  	<td>
+		  		<%= u.roles_for_project(@issue.project).collect{|r| r.name}.join(", ") %>
+			</td>
+		<% end %>
   		<% @issue.required_skills.each do |rs| %>
 		<% uskills = u.user_skills.select{|us| us.skill == rs.skill} %>
 		<td>
@@ -49,6 +67,46 @@
 		<% end %>
 	  </tr>
 	<% end %>
+	<% if isForm %>
+		<% roles = Role.find_all_givable %>
+		<tr id="membership-roles" style="display:none;">
+			<td colspan="<%= 2 + @issue.required_skills.length %>">
+				<br/>
+				<p><%= l(:text_add_roles_for_assignment) %><br/>
+				<% roles.each do |role| %>
+				  <label><%= check_box_tag 'membership[role_ids][]', role.id %> <%=h role %></label><br/>
+				<% end %>
+				</p>
+			</td>
+		</tr>
+	<% end %>
 <% end %>
   </tbody>
 </table>
+
+<script type="text/javascript">
+	function handleMembershipForm(user_id) {
+		status = $('membership_status_' + user_id).value;
+		if (status == "member") {
+			hideMembershipForm();
+		} else {
+			showMembershipForm();
+		}
+	}
+	
+	function hideMembershipForm() {
+		formRow = $('membership-roles');
+		if (formRow.visible()) {
+			formRow.toggle();
+			$$('#membership_role_ids_').each(function(elem, index) {elem.checked = false;});
+		}
+	}
+
+	function showMembershipForm() {
+		formRow = $('membership-roles');
+		if (!formRow.visible()) {
+			formRow.toggle();
+		}
+	}
+</script>
+	

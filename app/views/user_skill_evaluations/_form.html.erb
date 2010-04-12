@@ -40,7 +40,7 @@
 				    	<%= link_to skill.name, 
 									{ :controller => 'skills', :action => 'show', :id => skill, :project_id => @project }, 
 									:title => h(skill.description)
-						%>: <%= change_form.select :new_level, (0..5).to_a, :html => { :tabindex => autotab } %> 
+						%>: <%= change_form.select :new_level, (0..5).to_a %> 
 						<%= change_form.hidden_field :old_level %>
 						<%= change_form.hidden_field :skill_id %>
 					</span></td>
@@ -65,7 +65,7 @@
 		    <% fields_for prefix, change do |change_form| %>
 			    <td width="10%"><span style="white-space: nowrap">
 					<%= change_form.label :new_skill %>:
-			    	<%= change_form.text_field :name, :size => 20, :tabindex => autotab %> <%= change_form.select :new_level, (1..5).to_a, :tabindex => autotab %> 
+			    	<%= change_form.text_field :name, :size => 20 %> <%= change_form.select :new_level, (1..5).to_a %> 
 					<div class="autocomplete" id="autocomplete_div" style="display:none"></div>
 					<%= change_form.hidden_field :old_level %>
 					<%= change_form.hidden_field :skill_id %>
@@ -76,15 +76,15 @@
 		<tr>
 		  	<td colspan="<%= numcols * 2 %>">
 		  		<%= f.label :issue_id %> #
-				<%= f.text_field :issue_id, :size => 10, :tabindex => autotab %><br/>
+				<%= f.text_field :issue_id, :size => 10 %><br/>
 		  		<%= f.label :assessment %>
-				<%= f.text_area :assessment, :rows => 5, :class => 'wiki-edit', :required => true, :tabindex => autotab %>
+				<%= f.text_area :assessment, :rows => 5, :class => 'wiki-edit', :required => true %>
 				<%= wikitoolbar_for 'user_skill_evaluation_assessment' %>
 		  	</td>
 		</tr>
 		<tr>
 		  	<td colspan="<%= numcols * 2 %>">
-			  <%= submit_tag l(:button_submit_evaluation), :tabindex => autotab %>
+			  <%= submit_tag l(:button_submit_evaluation) %>
 			  <%= 
 				link_to(l(:button_cancel), "#", 
 					:onclick => "Element.toggle('show_skills');Element.toggle('edit_skills');return false;")

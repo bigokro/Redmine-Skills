@@ -55,6 +55,7 @@ class SkillsMatcherController < ApplicationController
         end
       end
     end
+    @matched_users = @matched_users.select{|u| !u.anonymous?}
     refresh_matched_users
   end
   
@@ -72,7 +73,8 @@ class SkillsMatcherController < ApplicationController
 
   def refresh_matched_users
     respond_to do |format|
-      format.html { render :template => 'skills_matcher/assign_user' }
+      # TODO: make this redirect parameterizable
+      format.html { render :template => 'required_skills/assign_user' }
       format.js do
         render :update do |page|
             page.replace_html "matched_users", :partial => "skills_matcher/find_users"
