@@ -42,6 +42,8 @@ en:
     notice_unsuccessful_assignment: User {{name}} could not be assigned to this issue.
     notice_add_memberships_success: User {{name}} was successfully added to this project.
     notice_add_memberships_faiure: User {{name}} could not be added to this project.
+    
+    error_assignee_unqualified: The user selected is not qualified to be assigned to this issue
 
     text_required_skill_remove_confirmation: Remove required skill '{{name}}' from this issue ?
     text_user_skill_destroy_confirmation: Remove skill '{{name}}' from this user ?
