@@ -37,13 +37,16 @@ Redmine::Plugin.register :redmine_skills do
                 }
   end
 
-#  menu :main_menu, :skills, { :controller => 'skills', :action => 'index' }, :caption => :label_skills
   menu :top_menu, :skills, { :controller => 'skills', :action => 'index' }, :caption => :label_skills
   menu :project_menu, :skills, { :controller => 'skills_project_configs', :action => 'edit' }, :caption => :label_skills, :param => :id
 
-  # This plugin contains settings
-#  settings :default => {
-#    'users_can_view_own_skills' => true
-#  }, :partial => 'settings/skills'
+  default_configs = {}
+  IssueStatus.all.each do |status|
+    configname = 'assignable_status_' + status.name.gsub(" ", "_").downcase
+    default_configs[configname] = status.is_closed ? "0" : "1"
+  end
+  default_configs['users_can_view_own_skills'] = "1"
+  default_configs['view_only_assignable_issues'] = "0"
+  settings :default => default_configs, :partial => 'settings/skills'
 
 end

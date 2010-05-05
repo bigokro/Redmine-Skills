@@ -18,8 +18,7 @@ class SkillsMatcherController < ApplicationController
       # TODO: handle hierarchical skill relationships
       # TODO: allow configuration of handling of trivial skill level requirements
       # TODO: filter for status, already assigned
-      user_skill_ids = @user.user_skills.collect{|us| us.skill_id}
-      @matched_issues = Issue.find_by_sql(['SELECT * FROM issues i WHERE 0 = (SELECT COUNT(*) FROM required_skills rs WHERE i.id = rs.issue_id AND rs.level > 1 AND rs.skill_id NOT IN (?))', user_skill_ids]) 
+      @matched_issues = find_available_issues(@user) 
       refresh_matched_issues
     else
       @user = User.current

@@ -30,6 +30,10 @@ en:
     label_find_assignees: Find qualified users
     label_qualified_assignees: Qualified Users
     label_project_role: Project role
+    label_available_to_me_issues: Available Issues
+    label_find_qualifying_issues: Search Issues by skill levels
+    label_users_can_view_own_skills: Allow users to see their skills
+    label_view_only_assignable_issues: List only assignable issues 
     
     button_manage_user_skills: Submit an evaluation
     button_submit_evaluation: Submit evaluation
@@ -57,4 +61,6 @@ en:
     text_no_results_for_search: Your search returned no results
     text_add_skill_block: The assigned user is unqualified for the new skill requirement. If you wish to change the requirements, you must first unassign this user.
     text_add_skill_warn: The assigned user is unqualified for the new skill requirement. Are you sure you wish to make this change?
-    text_add_roles_for_assignment: The selected user is not an assignable member of this project.<br/>Please select one or more of the membership roles below if you wish to add them to this project:
+    text_add_roles_for_assignment: The selected user is not an assignable member of this project.<br/>Please select one or more of the membership roles below if you wish to add them to this project.
+    text_select_available_statuses: Select assignable statuses for searches
+    

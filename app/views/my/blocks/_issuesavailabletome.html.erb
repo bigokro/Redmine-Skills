@@ -1,0 +1,18 @@
+<% available_issues = SkillsMatcherHelper.find_available_issues User.current %>
+<h3><%=l(:label_available_to_me_issues)%> (<%= available_issues.size %>)</h3>
+
+<%= render :partial => 'issues/list_simple', :locals => { :issues => available_issues } %>
+<% if available_issues.length > 0 %>
+<p class="small"><%= link_to l(:label_find_qualifying_issues), :controller => 'issues',
+														 :action => 'index',
+														 :set_filter => 1,
+														 :assigned_to_id => 'me',
+														 :sort => 'priority:desc,updated_on:desc' %></p>
+<% end %>
+
+<% content_for :header_tags do %>
+<%= auto_discovery_link_tag(:atom, 
+                            {:controller => 'issues', :action => 'index', :set_filter => 1,
+                             :assigned_to_id => 'me', :format => 'atom', :key => User.current.rss_key},
+                            {:title => l(:label_assigned_to_me_issues)}) %>
+<% end %>
