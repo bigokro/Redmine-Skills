@@ -1,4 +1,4 @@
-<% available_issues = SkillsMatcherHelper.find_available_issues User.current %>
+<% available_issues = SkillsMatcherHelper.find_available_issues(User.current) %>
 <h3><%=l(:label_available_to_me_issues)%> (<%= available_issues.size %>)</h3>
 
 <%= render :partial => 'issues/list_simple', :locals => { :issues => available_issues } %>
@@ -6,7 +6,7 @@
 <p class="small"><%= link_to l(:label_find_qualifying_issues), :controller => 'issues',
 														 :action => 'index',
 														 :set_filter => 1,
-														 :assigned_to_id => 'me',
+														 :assigned_to_id => '!*',
 														 :sort => 'priority:desc,updated_on:desc' %></p>
 <% end %>
 

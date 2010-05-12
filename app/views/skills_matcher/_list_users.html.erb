@@ -54,11 +54,11 @@
 		  		<%= u.roles_for_project(@issue.project).collect{|r| r.name}.join(", ") %>
 			</td>
 		<% end %>
-  		<% @issue.required_skills.each do |rs| %>
-		<% uskills = u.user_skills.select{|us| us.skill == rs.skill} %>
+  		<% @filters.each do |filter| %>
+		<% uskills = u.user_skills.select{|us| us.skill == filter.skill} %>
 		<td>
 			<% if uskills.nil? || uskills.empty? %>
-				<%= rs.skill.name %>: 1
+				<%= filter.skill.name %>: 1
 			<% else %>
 				<% us = uskills[0] %>
 				<%= us.skill.name %>: <%= us.level %>

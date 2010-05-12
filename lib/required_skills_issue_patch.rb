@@ -9,7 +9,7 @@ module IssuePatch
     
     # Same as typing in the class
     base.class_eval do
-#      unloadable # Send unloadable so it will not be unloaded in development
+      unloadable # Send unloadable so it will not be unloaded in development
       has_many :required_skills, :class_name => 'RequiredSkill', :foreign_key => 'issue_id', :dependent => :delete_all
     end
   end

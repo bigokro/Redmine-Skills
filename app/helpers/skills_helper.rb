@@ -46,6 +46,10 @@ module SkillsHelper
       ""
     end
   end
+  
+  def self.configuration_issue_statuses
+      IssueStatus.all.collect{ |s| Setting['plugin_redmine_skills']['assignable_status_' + s.name.gsub(" ", "_").downcase] == "1" ? s : nil}.compact
+  end
 
 end
 

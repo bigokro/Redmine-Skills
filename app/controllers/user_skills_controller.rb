@@ -21,7 +21,7 @@ class UserSkillsController < ApplicationController
   private 
   
   def load_model
-    user_id = params[:user_id] || params[:user_skill][:user_id]
+    user_id = params[:user_id] || params[:user_skill][:user_id] || params[:user][:id]
     @user = User.find(user_id)
   end
   

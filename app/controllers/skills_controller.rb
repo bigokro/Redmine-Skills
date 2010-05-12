@@ -9,7 +9,12 @@ class SkillsController < ApplicationController
 
   def index
     @skills = Skill.find(:all, :conditions => "super_skill_id IS NULL", :order => "name")
-    @users = User.find(:all, :order => "login")
+    @users = User.find(:all, :order => "login").select{|u| !u.anonymous?}
+    @filters = [
+        SkillFilter.new(:skill => Skill.find_by_name("Java"), :level => 2, :operator => ">="),
+        SkillFilter.new(:skill => Skill.find_by_name("Rails"), :level => 4, :operator => "<="),
+        SkillFilter.new(:skill => Skill.find_by_name("DekiScript"), :operator => "!*")
+    ]
   end
   
   def show

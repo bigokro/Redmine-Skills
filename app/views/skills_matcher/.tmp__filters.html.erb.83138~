@@ -1,0 +1,123 @@
+<% active_skills = Skill.all_active %>
+<% skill_names = active_skills.collect{|s| s.name}.join(',') %>
+
+<script type="text/javascript">
+//<![CDATA[
+function add_filter() {
+	var fnum = $$('.filter').length
+	var tb = $('filter_table').firstElementChild;
+	var template = $('form_template');
+	var tr = template.cloneNode(true);
+	tr.id = 'new_filter_' + fnum;
+    for (var i = 0; i < tr.childNodes.length;  i++)	{
+		var child = tr.childNodes[i];
+	    if (child.id) {
+			child.id = child.id + fnum;
+	    }
+	    for (var j = 0; j < child.childNodes.length; j++) {
+			var grandchild = child.childNodes[j];
+			if (grandchild.id) {
+				grandchild.id = grandchild.id + fnum;
+				grandchild.name = grandchild.name + fnum;
+			}
+		}
+    }
+    tb.appendChild(tr);
+	tr.setStyle({ display: 'table-row' });
+	
+	// Configure autocompletion
+	var data = "<%= skill_names %>".split(",");
+	new Autocompleter.Local("skills_" + fnum, "skills_autocomplete_" + fnum, data, {partialChars: 2, choices: 20});
+}
+
+function toggle_filter(field) {
+    check_box = field; //$('cb_' + field);
+    fieldnum = field.id.substring(field.id.indexOf('_') + 1);
+    
+    if (check_box.checked) {
+        Element.show("operators_" + fieldnum);
+        toggle_operator(field);
+    } else {
+        Element.hide("operators_" + fieldnum);
+        Element.hide("levels_" + fieldnum);
+  }
+}
+
+function toggle_operator(field) {
+  operator = field; // $("operators_" + field);
+  fieldnum = field.id.substring(field.id.indexOf('_') + 1);
+  switch (operator.value) {
+    case "!*":
+    case "*":
+    case "t":
+    case "w":
+    case "o":
+    case "c":
+      Element.hide("levels_" + fieldnum);
+      break;
+    default:
+      Element.show("levels_" + fieldnum);
+      break;
+  }
+}
+
+//]]>
+</script>
+
+<table width="100%">
+<tr>
+<td>
+<table id="filter_table">
+	<tbody>
+<% filters = [] if filters.nil? %>
+<% fcount = 0 %>
+<% filters.each do |filter| %>
+	<% fcount += 1 %>
+    <tr class="filter">
+    <td style="width:200px;">
+        <%= check_box_tag "cb_#{fcount}", 1, true, :onclick => "toggle_filter(this);", :id => "cb_#{fcount}" %> 
+		<%= filter.skill.name %>
+		<%= hidden_field_tag "skills_#{fcount}", filter.skill.name, :id => "skills_#{fcount}" %>
+    </td>
+    <td style="width:150px;">
+        <%= select_tag "operators_#{fcount}", options_for_select(SkillFilter.options_for_operators, filter.operator), {:id => "operators_#{fcount}", :onchange => "toggle_operator(this);", :class => "select-small", :style => "vertical-align: top;"} %>
+    </td>
+    <td>    
+    <div id="div_values_<%= fcount %>">
+        <%= select_tag "levels_#{fcount}", options_for_select(SkillFilter.options_for_levels, filter.level), {:id => "levels_#{fcount}", :class => "select-small", :style => "vertical-align: top;"} %>
+    </div>
+    <script type="text/javascript">toggle_filter('<%= fcount %>');</script>
+    </td>
+    </tr>
+<% end %>
+	<!-- Sample form used as a template for new filters -->
+    <tr class="filter" id="form_template" style="display: none;">
+    <td style="width:200px;">
+        <%= check_box_tag "cb_", 1, true, :onclick => "toggle_filter(this);", :id => "cb_" %> 
+		<%= text_field_tag "skills_", nil, :id => "skills_", :autocomplete => "off" %>
+		<div class="autocomplete" id="skills_autocomplete_" style="display:none"></div>
+    </td>
+    <td style="width:150px;">
+        <%= select_tag "operators_", options_for_select(SkillFilter.options_for_operators), {:id => "operators_", :onchange => "toggle_operator(this);", :class => "select-small", :style => "vertical-align: top;"} %>
+    </td>
+    <td>    
+        <%= select_tag "levels_", options_for_select(SkillFilter.options_for_levels), {:id => "levels_", :class => "select-small", :style => "vertical-align: top;"} %>
+    </td>
+    </tr>
+	</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td><br/>
+<%= link_to l(:label_filter_add),
+			"#",
+			:onclick => "add_filter();"
+ %>
+</td>
+</tr>
+</table>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'autocomplete', :plugin => 'redmine_skills' %>
+<% end %>

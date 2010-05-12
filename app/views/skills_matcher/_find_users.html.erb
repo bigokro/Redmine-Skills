@@ -1,14 +1,31 @@
-<div id="matched_users" class="issue">
+<div id="matched_users">
+<% form_remote_tag(:url => { :controller => "skills_matcher", :action => :find_users_by_filter}) do %>
+	<div id="query_form_content">
+    <fieldset id="filters" class="collapsible">
+    	<legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
+    	<div>
+    		<%= render :partial => 'skills_matcher/filters', :locals => {:filters => @filters} %>
+    	</div>
+    </fieldset>
+	</div>
+    <p class="buttons">
 
-<% form_remote_tag(:url => { :controller => "skills_matcher", :action => :find_users_for_issue}) do %>
-	<%= l(:label_issue) %> #
-	<%= text_field_tag 'issue_id' %>
-	<%= submit_tag l(:button_find_users) %>
+    <%= submit_tag l(:button_apply), :class => 'icon icon-checked' %>
+                       
+    <%= link_to l(:button_clear),
+                       	'#',
+						:onclick => "$$('.filter input[type=checkbox]').each(function(e){ e.checked = 0 });",
+                   		:class => 'icon icon-reload'  %>
+                       
+    </p>
 <% end %>
 
-<p>&nbsp;</p>
+<% if @matched_users.nil? || @matched_users.empty? %>
+<p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
 <div id="user_list">
 	<%= render :partial => 'skills_matcher/list_users', :locals => { :f => nil } %>
 </div>
-
+<p class="pagination"><!-- %= pagination_links_full @user_pages, @user_count % --></p>
+<% end %>
 </div>

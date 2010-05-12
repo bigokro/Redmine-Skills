@@ -72,7 +72,48 @@ class SkillsMatcherHelperTest < ActionView::TestCase
     assert_true user_is_qualified?(@user, @issue)
   end
   
-private
+  def test_filter_users_one_user_one_filter_no_excludes
+    user = sample_user
+    filters = [SkillFilter.new(:skill => user.user_skills[0].skill,
+                                :operator => ">=",
+                                :level => user.user_skills[0].level)]
+    filtered_users = SkillsMatcherHelper.filter_users [user], filters
+    assert_equal 1, filtered_users.size
+    assert_equal user, filtered_users[0]
+  end
+  
+  def test_filter_users_one_user_one_filter_excluded
+    user = sample_user
+    filters = [SkillFilter.new(:skill => user.user_skills[0].skill,
+                                :operator => ">=",
+                                :level => user.user_skills[0].level + 1)]
+    filtered_users = SkillsMatcherHelper.filter_users [user], filters
+    assert_true filtered_users.empty?
+  end
+  
+  def test_filter_users_one_user_multiple_filters_no_excludes
+    user = sample_user
+    filters = SkillsMatcherHelper.filters_for_user user
+    # A user should match their own filter
+    filtered_users = SkillsMatcherHelper.filter_users [user], filters
+    assert_equal 1, filtered_users.size
+    assert_equal user, filtered_users[0]
+  end
+
+  def test_filter_users_multiple_users_multiple_filters
+    user = sample_user
+    user2 = sample_user
+    user3 = sample_user
+    user.user_skills[0].level -= 1
+    user2.user_skills[1].level += 1
+    user3.user_skills[2].level += 1
+    filters = SkillsMatcherHelper.filters_for_user user
+    filtered_users = SkillsMatcherHelper.filter_users [user, user2, user3], filters
+    assert_equal 1, filtered_users.size
+    assert_equal user, filtered_users[0]
+  end
+
+  private
   
   def add_skill ulevel, ilevel, skill = @skill, user = @user, issue = @issue
     unless user.nil? || ulevel <= 0
@@ -85,5 +126,16 @@ private
       issue.required_skills << rskill
       issue.save
     end
+  end
+  
+  def sample_user
+    user = User.new
+    user.login = "testuser"
+    user.user_skills = [
+      UserSkill.new(:user => user, :level => 3, :skill => Skill.new(:name => "Java")),
+      UserSkill.new(:user => user, :level => 3, :skill => Skill.new(:name => "Rails")),
+      UserSkill.new(:user => user, :level => 3, :skill => Skill.new(:name => "jQuery"))
+    ]
+    return user
   end
 end

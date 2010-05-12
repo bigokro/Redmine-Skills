@@ -8,6 +8,7 @@ module UserEvaluationPatch
   def self.included(base) # :nodoc:
     # Same as typing in the class
     base.class_eval do
+      unloadable # Send unloadable so it will not be unloaded in development
       has_many :user_skill_evaluations, 
                 :class_name => 'UserSkillEvaluation', 
                 :foreign_key => 'user_id', 

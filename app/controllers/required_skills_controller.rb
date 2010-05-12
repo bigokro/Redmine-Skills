@@ -67,10 +67,12 @@ class RequiredSkillsController < ApplicationController
       # Unfortunately, I wasn't able to find a way to submit the change here and reuse all
       # IssuesController logic without doing a redirect, which requires a second manual form submit.
       #flash[:notice] = l(:notice_successful_assignment, :name => user.login)
+      flash[:notice] = '' if flash[:notice].nil?
       flash[:notice] += l(:notice_confirm_assignment, :name => user.login)
       redirect_to :controller => 'issues', :action => 'update', :id => @issue, :issue => { :assigned_to_id => user.id }
       return
     end
+    flash[:error] = '' if flash[:error].nil?
     flash[:error] += l(:notice_unsuccessful_assignment, :name => user.login)
     redirect_to :controller => 'skills_matcher', :action => :find_users_for_issue, :issue_id => @issue
   end

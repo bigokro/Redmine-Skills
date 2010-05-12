@@ -48,5 +48,10 @@ Redmine::Plugin.register :redmine_skills do
   default_configs['users_can_view_own_skills'] = "1"
   default_configs['view_only_assignable_issues'] = "0"
   settings :default => default_configs, :partial => 'settings/skills'
+  
+  # Show issues that the user is qualified for on My Page
+  MyController::DEFAULT_LAYOUT = {  'left' => ['issuesassignedtome', 'issuesavailabletome'], 
+                      'right' => ['issuesreportedbyme'] 
+                   }
 
 end

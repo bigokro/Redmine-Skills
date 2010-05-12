@@ -18,7 +18,7 @@ class SkillsMatcherController < ApplicationController
       # TODO: handle hierarchical skill relationships
       # TODO: allow configuration of handling of trivial skill level requirements
       # TODO: filter for status, already assigned
-      @matched_issues = find_available_issues(@user) 
+      @matched_issues = available_issues_for(@user) 
       refresh_matched_issues
     else
       @user = User.current
@@ -38,26 +38,19 @@ class SkillsMatcherController < ApplicationController
     # - Include users that *could* be eligible if they were promoted by one
     # TODO: handle hierarchical skill relationships
     # TODO: allow configuration of handling of trivial skill level requirements
-    rskills = @issue.required_skills.select{|rs| rs.level > 1}
-    if rskills.nil? || rskills.length == 0
-      # TODO: what about inactive users?
-      @matched_users = User.all
-    else
-      @matched_users = []
-      rskill = rskills.sort{|x,y| y.level <=> x.level}[0]
-      user_skills = UserSkill.find(:all, :conditions => "skill_id = #{rskill.skill_id} AND level >= #{rskill.level}")
-      if !user_skills.nil?
-        user_skills.each do |us|
-          if user_is_qualified? us.user, @issue
-            @matched_users << us.user
-          end
-        end
-      end
-    end
+    @filters = filters_for_issue @issue
+    @matched_users = find_users_by_filters @filters
     @matched_users = @matched_users.select{|u| !u.anonymous?}
     refresh_matched_users
   end
-  
+
+  def find_users_by_filter
+    create_filters_from_params
+    @matched_users = find_users_by_filters @filters
+    @matched_users.reject!{|u| u.anonymous?}
+    refresh_matched_users
+  end
+
   private 
   
   def refresh_matched_issues
@@ -79,6 +72,20 @@ class SkillsMatcherController < ApplicationController
             page.replace_html "matched_users", :partial => "skills_matcher/find_users"
         end
       end
+    end
+  end
+  
+  def create_filters_from_params
+    @filters = []
+    i = 1
+    while !params["levels_#{i}"].nil? do
+      if params["cb_#{i}"]
+        skill = Skill.find_by_name(params["skills_#{i}"])
+        @filters << SkillFilter.new(:skill => skill, 
+                                    :operator => params["operators_#{i}"],
+                                    :level => params["levels_#{i}"].to_i)
+      end
+      i += 1
     end
   end
 
