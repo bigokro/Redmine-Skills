@@ -1,0 +1,13 @@
+<% form_tag( {:controller => 'user_skills', :action => 'show'}, :method => :get) do %>
+<fieldset class="box"><legend><%=l(:label_view_user_skills)%></legend>
+
+<p>
+	<%= select :user, :id, @users.collect {|u| [ "#{u.name} (#{u.login})", u.id ] } %>
+	<%= submit_tag l(:button_submit), :onclick => "window.location.href = '" + url_for(:controller => 'user_skills', :action => 'show') + "?user_id=' + $('user_id').getValue(); return false;" %>
+</p>
+</fieldset>
+<% end %>
+
+<fieldset class="box"><legend><%=l(:label_find_users)%></legend>
+	<%= link_to(l(:label_find_users_by_filter), :controller => "skills_matcher", :action => "find_users_by_filter") %>
+</fieldset>

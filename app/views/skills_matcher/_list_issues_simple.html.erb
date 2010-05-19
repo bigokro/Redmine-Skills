@@ -1,0 +1,39 @@
+<table class="list">
+<thead>
+<tr>
+	<th>#</th>
+	<th><%= l(:field_project) %></th>
+	<th><%= l(:field_tracker) %></th>
+	<th><%= l(:field_subject) %></th>
+	<th><%= l(:label_skills_required) %></th>
+</tr>
+</thead>
+  <tbody>
+<% if issues.nil? %>
+		<tr><td colspan="5" style="text-align: center;"><%= l(:text_enter_criteria_for_search) %></td></tr>
+<% elsif issues.empty? %>
+		<tr><td colspan="5" style="text-align: center;"><%= l(:text_no_results_for_search) %></td></tr>
+<% else %>
+	<% for i in issues %>
+	  <tr class="<%= cycle("odd", "even") %>">
+	  	<td><%= i.id %></td>
+	  	<td><%= i.tracker.name %></td>
+	  	<td>
+	  		<%= link_to i.subject, 
+				{ :controller => 'issues', :action => 'show', :id => i }
+			%>
+		</td>
+	  	<td><%= i.status %></td>
+		<td>
+			<% if i.required_skills.nil? || i.required_skills.empty? %>
+				&nbsp;
+			<% else %>
+				<%= i.required_skills.collect{ |rs| "#{rs.name}: #{rs.level}" }.join(',') %>
+			<% end %>
+		</td>
+	  </tr>
+	<% end %>
+<% end %>
+  </tbody>
+</table>
+

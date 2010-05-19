@@ -1,0 +1,56 @@
+<% unless @user.nil? %>
+	<h3><%= link_to "#{@user.name} (#{@user.login})", 
+				{ :controller => 'user_skills', :action => 'show', :user_id => @user }, 
+				:title => h(@user.name)
+			%></h3>
+<% end %>
+
+<table class="list">
+<% numcols = 1 + @filters.length %>
+<thead>
+<tr>
+	<%= sort_header_tag('id', :caption => '#', :default_order => 'asc') %>
+	<%= sort_header_tag('tracker.name', :caption => l(:label_tracker), :default_order => 'asc') %>
+	<%= sort_header_tag('subject', :caption => l(:label_issue), :default_order => 'asc') %>
+	<%= sort_header_tag('status.name', :caption => l(:label_issue_status), :default_order => 'asc') %>
+	<% @filters.each do |filter| %>
+		<%= sort_header_tag(filter.skill.name, 
+				:caption => "#{filter.skill.name} #{l(SkillFilter::OPERATORS[filter.operator])} #{filter.level}", 
+				:default_order => 'desc') %>
+	<% end %>
+</tr>
+</thead>
+
+  <tbody>
+<% if @matched_issues.nil? %>
+		<tr><td colspan="<%= numcols %>" style="text-align: center;"><%= l(:text_enter_criteria_for_search) %></td></tr>
+<% elsif @matched_issues.empty? %>
+		<tr><td colspan="<%= numcols %>" style="text-align: center;"><%= l(:text_no_results_for_search) %></td></tr>
+<% else %>
+	<% for i in @matched_issues %>
+	  <tr class="<%= cycle("odd", "even") %>">
+	  	<td><%= i.id %></td>
+	  	<td><%= i.tracker.name %></td>
+	  	<td>
+	  		<%= link_to i.subject, 
+				{ :controller => 'issues', :action => 'show', :id => i }
+			%>
+		</td>
+	  	<td><%= i.status %></td>
+  		<% @filters.each do |filter| %>
+		<% rskills = i.required_skills.select{|rs| rs.skill == filter.skill} %>
+		<td>
+			<% if rskills.nil? || rskills.empty? %>
+				&nbsp;
+			<% else %>
+				<% rs = rskills[0] %>
+				<%= rs.skill.name %>: <%= rs.level %>
+			<% end %>
+		</td>
+		<% end %>
+	  </tr>
+	<% end %>
+<% end %>
+  </tbody>
+</table>
+

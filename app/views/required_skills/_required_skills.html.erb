@@ -78,7 +78,7 @@
 <% end %>
 
 <% if authorize_for('issues', 'edit') %>
-	<p><%= link_to l(:label_find_assignees), { :controller => 'skills_matcher', :action => :find_users_for_issue, :issue_id => @issue } %></p>
+	<p><%= link_to l(:label_find_assignees), { :controller => 'skills_matcher', :action => :find_users_for_issue, :issue_id => @issue, :assign_to_issue => "true" } %></p>
 <% end %>
 
 </div>

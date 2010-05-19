@@ -1,5 +1,5 @@
 <div id="matched_users">
-<% form_remote_tag(:url => { :controller => "skills_matcher", :action => :find_users_by_filter}) do %>
+<% form_remote_tag(:update => "content", :url => { :controller => "skills_matcher", :action => :find_users_by_filter}) do %>
 	<div id="query_form_content">
     <fieldset id="filters" class="collapsible">
     	<legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>

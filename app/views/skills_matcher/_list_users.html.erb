@@ -6,28 +6,25 @@
 
 <table class="list">
 <% isForm = !f.nil? %>
-<% numcols = 1 %>
-<% unless @issue.nil? %>
-  <% numcols = 1 + @issue.required_skills.length %>
-  <thead>
-	<tr>
-		<% if isForm %>
-			<th>&nbsp;</th>
-		<% end %>
-		<th style="text-align: left;">
-			<%= l(:label_user) %>
-		</th>
+<% numcols = 1 + @filters.length + (isForm ? 1 : 0) %>
+<thead>
+<tr>
+	<% if isForm %>
+		<th>&nbsp;</th>
+	<% end %>
+	<%= sort_header_tag('user', :caption => l(:label_user), :default_order => 'asc') %>
+	<% unless @issue.nil? %>
 		<th style="text-align: left;">
 			<%= l(:label_project_role) %>
 		</th>
-  		<% @issue.required_skills.each do |rs| %>
-		<th style="text-align: left;">
-			<%= rs.skill.name %>: <%= rs.level %>
-		</th>
-		<% end %>
-	</tr>
-  </thead>
-<% end %>
+	<% end %>
+	<% @filters.each do |filter| %>
+		<%= sort_header_tag(filter.skill.name, 
+				:caption => "#{filter.skill.name} #{l(SkillFilter::OPERATORS[filter.operator])} #{filter.level}", 
+				:default_order => 'desc') %>
+	<% end %>
+</tr>
+</thead>
 
   <tbody>
 <% if @matched_users.nil? %>
@@ -44,7 +41,7 @@
 			</td>
 		<% end %>
 	  	<td>
-	  		<%= link_to u.login, 
+	  		<%= link_to "#{u.name} (#{u.login})", 
 				{ :controller => 'user_skills', :action => 'show', :user_id => u }, 
 				:title => h(u.name)
 			%>

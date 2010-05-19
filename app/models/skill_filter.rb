@@ -41,7 +41,7 @@ class SkillFilter
   # should be the ones used in the initial database query.
   # A more sophisticated solution would be to use database histograms... maybe some day...
   def rarity
-    case operator
+    case @operator
       when "="
         5
       when "!"
@@ -49,46 +49,52 @@ class SkillFilter
       when "!*"
         0
       when ">="
-        level        
+        @level        
       when "<="
-        6 - level
+        6 - @level
       else
         0
     end
   end
   
   def where_condition table_alias
-    case operator
+    case @operator
       when "!"
-        "(#{table_alias}.skill_id = #{skill.id} AND #{table_alias}.level != #{level})"
+        "(#{table_alias}.skill_id = #{@skill.id} AND #{table_alias}.level != #{@level})"
       when "!*"
         # FIXME: This ain't gonna work
-        "(#{table_alias}.skill_id != #{skill.id})"
+        "(#{table_alias}.skill_id != #{@skill.id})"
       else
-        "(#{table_alias}.skill_id = #{skill.id} AND #{table_alias}.level #{operator} #{level})"
+        "(#{table_alias}.skill_id = #{@skill.id} AND #{table_alias}.level #{@operator} #{@level})"
     end
   end
   
   # Returns true if the item should be removed from the list according to this filter
-  def excludes? item
-    if item.skill == skill
-      case operator
+  # The first parameter is an array of objects with skills and levels (RequiredSkills or UserSkills)
+  # The second is a boolean that indicates what to return if the skill level list
+  # has no items with a skill that matches the filter
+  # (Generally, this is true for testing users - they should be excluded if they don't have the skill -
+  # and false for issues - it's ok if a user possesses a skill that isn't required by an issue)
+  def excludes? skill_level_list, no_match_result = true
+    matching_skills = skill_level_list.select{|sl| sl.skill == @skill}
+    return (no_match_result && @operator != "!*") if matching_skills.empty?
+    excluded_skills = matching_skills.select do |mskill|
+      case @operator
         when "="
-          item.level != level
+          mskill.level != @level
         when "!"
-          item.level == level
+          mskill.level == @level
         when "!*"
           true
         when ">="
-          item.level < level        
+          mskill.level < @level        
         when "<="
-          item.level > level
+          mskill.level > @level
         else
           false
       end
-    else
-      false
     end
+    return !excluded_skills.empty?
   end
 end
 
@@ -109,18 +115,21 @@ class NoOtherSkillsFilter < SkillFilter
   # If the issue has any required skills that the user doesn't possess, it should be 
   # excluded by this filter
   # TODO: Configuration for the case of implicit skills (i.e. a required skill of level 1)
-  def excludes? item
-    filter_skills = filters.collect{ |f| f.skill }
-    return (item.level > 1) && !(filter_skills.include? item.skill)
+  def excludes? skill_level_list, no_match_result = true
+    filter_skills = @filters.collect{ |f| f.skill }
+    unmatched_skills = skill_level_list.select do |sl|
+      (sl.level > 1) && !(filter_skills.include? sl.skill)
+    end
+    return !unmatched_skills.empty? 
   end
   
   def where_condition table_alias
-    skill_ids = filters.collect{|f| f.skill.nil? ? nil : f.skill.id }.compact
+    skill_ids = @filters.collect{|f| f.skill.nil? ? nil : f.skill.id }.compact
     "0 = (SELECT COUNT(*)
                       FROM required_skills reqs
                      WHERE i.id = reqs.issue_id 
                        AND reqs.level > 1 
                        AND reqs.skill_id NOT IN (#{skill_ids.join(',')}) 
-    "
+    )"
   end
 end

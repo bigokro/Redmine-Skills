@@ -1,62 +1,31 @@
-<div id="matched_issues" class="issue">
-<h3><%=l(:label_issue_plural)%></h3>
+<div id="matched_issues">
+<% form_remote_tag(:update => "content", :url => { :controller => "skills_matcher", :action => :find_issues_by_filter}) do %>
+	<div id="query_form_content">
+    <fieldset id="filters" class="collapsible">
+    	<legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
+    	<div>
+    		<%= render :partial => 'skills_matcher/filters', :locals => {:filters => @filters} %>
+    	</div>
+    </fieldset>
+	</div>
+    <p class="buttons">
 
-<% form_remote_tag(:url => { :controller => "skills_matcher", :action => :find_issues_for_user}) do %>
-	<%= l(:label_user) %> #
-	<%= text_field_tag 'user_id', @user.nil? ? '' : @user.id %>
-	<%= submit_tag l(:button_find_issues) %>
+    <%= submit_tag l(:button_apply), :class => 'icon icon-checked' %>
+                       
+    <%= link_to l(:button_clear),
+                       	'#',
+						:onclick => "$$('.filter input[type=checkbox]').each(function(e){ e.checked = 0 });",
+                   		:class => 'icon icon-reload'  %>
+                       
+    </p>
 <% end %>
 
-<p>&nbsp;</p>
-<table class="list">
-<% numcols = 1 %>
-<% if !@user.nil? %>
-  <% numcols = 1 + @user.user_skills.length %>
-  <thead>
-	<tr>
-		<th style="text-align: left;">
-	  		<%= link_to "#{@user.name} (#{@user.login})", 
-				{ :controller => 'user_skills', :action => 'show', :user_id => @user }, 
-				:title => h(@user.name)
-			%>
-		</th>
-  		<% @user.user_skills.each do |us| %>
-		<th style="text-align: left;">
-			<%= us.skill.name %>: <%= us.level %>
-		</th>
-		<% end %>
-	</tr>
-  </thead>
-<% end %>
-
-  <tbody>
-<% if @matched_issues.nil? %>
-		<tr><td colspan="<%= numcols %>" style="text-align: center;"><%= l(:text_enter_criteria_for_search) %></td></tr>
-<% elsif @matched_issues.empty? %>
-		<tr><td colspan="<%= numcols %>" style="text-align: center;"><%= l(:text_no_results_for_search) %></td></tr>
+<% if @matched_issues.nil? || @matched_issues.empty? %>
+<p class="nodata"><%= l(:label_no_data) %></p>
 <% else %>
-	<% for i in @matched_issues %>
-	  <tr class="<%= cycle("odd", "even") %>">
-	  	<td>
-	  		<%= link_to "#{i.tracker.name} ##{i.id} (#{i.status}): #{i.subject}", 
-				{ :controller => 'issues', :action => 'show', :id => i }
-			%>
-		</td>
-  		<% @user.user_skills.each do |us| %>
-		<% rskills = i.required_skills.select{|rs| rs.skill == us.skill} %>
-		<td>
-			<% if rskills.nil? || rskills.empty? %>
-				&nbsp;
-			<% else %>
-				<% rs = rskills[0] %>
-				<%= rs.skill.name %>: <%= rs.level %>
-			<% end %>
-		</td>
-		<% end %>
-	  </tr>
-	<% end %>
+<div id="issue_list">
+	<%= render :partial => 'skills_matcher/list_issues', :locals => { :f => nil } %>
+</div>
+<p class="pagination"><!-- %= pagination_links_full @issue_pages, @issue_count % --></p>
 <% end %>
-  </tbody>
-</table>
-
 </div>

@@ -27,15 +27,19 @@ en:
     label_evaluation_date: Date of evaluation
     label_user_skill_changes: Changes
     label_assessment: Assessment
-    label_find_users: Find Users
+    label_find_users: Find users
+    label_find_users_by_filter: Find users by skills
     label_find_assignees: Find qualified users
-    label_qualified_assignees: Qualified Users
+    label_qualified_assignees: Find qualified users
     label_project_role: Project role
-    label_available_to_me_issues: Available Issues
-    label_find_qualifying_issues: Search Issues by skill levels
+    label_available_to_me_issues: Available issues
+    label_find_qualifying_issues: Find issues to work on by skill level
     label_users_can_view_own_skills: Allow users to see their skills
     label_view_only_assignable_issues: List only assignable issues 
     label_show_available_issues_default: Show available issues on My Page
+    label_find_users_for_project: Find users for this project
+    label_find_issues: Find issues
+    label_find_issues_by_filter: Find issues by required skills
     
     button_manage_user_skills: Submit an evaluation
     button_submit_evaluation: Submit evaluation

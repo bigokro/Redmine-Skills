@@ -113,6 +113,35 @@ class SkillsMatcherHelperTest < ActionView::TestCase
     assert_equal user, filtered_users[0]
   end
 
+  def test_filter_users_more_filters_than_skills
+    user = sample_user
+    filters = SkillsMatcherHelper.filters_for_user user
+    filters.each{ |f| f.operator = ">=" }
+    user.user_skills.delete_at(2)
+    filtered_users = SkillsMatcherHelper.filter_users [user], filters
+    assert_true filtered_users.empty?
+  end
+
+  def test_filter_trivial_filter
+    user = sample_user
+    skill = user.user_skills.select{|us| us.skill.name == "Java"}[0].skill
+    filters = [ SkillFilter.new(:skill => skill, :operator => ">=", :level => 1)]
+    filtered_users = SkillsMatcherHelper.filter_users [user], filters
+    assert_equal 1, filtered_users.size
+    assert_equal user, filtered_users[0]
+  end
+
+  def test_filter_none
+    user = sample_user
+    user2 = sample_user
+    skill = user.user_skills[0].skill
+    user.user_skills.delete_at(0)
+    filters = [ SkillFilter.new(:skill => skill, :operator => "!*")]
+    filtered_users = SkillsMatcherHelper.filter_users [user, user2], filters
+    assert_equal 1, filtered_users.size
+    assert_equal user, filtered_users[0]
+  end
+
   private
   
   def add_skill ulevel, ilevel, skill = @skill, user = @user, issue = @issue
@@ -131,11 +160,16 @@ class SkillsMatcherHelperTest < ActionView::TestCase
   def sample_user
     user = User.new
     user.login = "testuser"
-    user.user_skills = [
-      UserSkill.new(:user => user, :level => 3, :skill => Skill.new(:name => "Java")),
-      UserSkill.new(:user => user, :level => 3, :skill => Skill.new(:name => "Rails")),
-      UserSkill.new(:user => user, :level => 3, :skill => Skill.new(:name => "jQuery"))
-    ]
+    unless @test_skills
+      @test_skills = [
+        Skill.new(:name => "Java"),
+        Skill.new(:name => "Rails"),
+        Skill.new(:name => "jQuery")
+      ]
+    end
+    user.user_skills = @test_skills.collect do |s|
+      UserSkill.new(:user => user, :level => 3, :skill => s)
+    end
     return user
   end
 end

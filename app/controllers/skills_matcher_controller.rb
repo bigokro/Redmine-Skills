@@ -5,6 +5,8 @@ class SkillsMatcherController < ApplicationController
   helper :skills
   include SkillsHelper
   include SkillsMatcherHelper
+  helper :sort
+  include SortHelper
 
   def find_issues_for_user
     if request.post?
@@ -46,32 +48,66 @@ class SkillsMatcherController < ApplicationController
 
   def find_users_by_filter
     create_filters_from_params
-    @matched_users = find_users_by_filters @filters
+
+    sort_init([['user', 'asc']])
+    sort_update(['user'] + @filters.collect{|f| f.skill.name})
+
+    limit = 10
+    @user_count = count_users_by_filters @filters
+    @user_pages = Paginator.new self, @user_count, limit, params['page']
+
+    @matched_users = find_users_by_filters @filters, @sort_criteria
     @matched_users.reject!{|u| u.anonymous?}
+
     refresh_matched_users
+  end
+
+  def find_issues_by_filter
+    create_filters_from_params
+
+    sort_init([['id', 'asc']])
+    sort_update(['id', 'issue'] + @filters.collect{|f| f.skill.name})
+
+    limit = 10
+    @issue_count = count_issues_by_filters @filters
+    @issue_pages = Paginator.new self, @issue_count, limit, params['page']
+
+    # TODO: filter by statuses?
+    @matched_issues = find_issues_by_filters @filters, @sort_criteria
+
+    refresh_matched_issues
   end
 
   private 
   
   def refresh_matched_issues
     respond_to do |format|
-      format.js do
-        render :update do |page|
-            page.replace_html "matched_issues", :partial => "skills_matcher/find_issues"
-        end
+      format.html do
+          render :template => 'skills_matcher/find_issues', :layout => !request.xhr?
       end
+#      format.js do
+#        render :update do |page|
+#            page.replace_html "content", :partial => "skills_matcher/find_issues"
+#        end
+#      end
     end
   end
 
   def refresh_matched_users
     respond_to do |format|
       # TODO: make this redirect parameterizable
-      format.html { render :template => 'required_skills/assign_user' }
-      format.js do
-        render :update do |page|
-            page.replace_html "matched_users", :partial => "skills_matcher/find_users"
+      format.html do
+        if params[:assign_to_issue]
+          render :template => 'required_skills/assign_user'
+        else
+          render :template => 'skills_matcher/find_users', :layout => !request.xhr?
         end
       end
+#      format.js do
+#        render :update do |page|
+#            page.replace_html "matched_users", :partial => "skills_matcher/find_users"
+#        end
+#      end
     end
   end
   

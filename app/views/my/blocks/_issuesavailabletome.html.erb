@@ -1,14 +1,25 @@
-<% available_issues = SkillsMatcherHelper.find_available_issues(User.current) %>
-<h3><%=l(:label_available_to_me_issues)%> (<%= available_issues.size %>)</h3>
+<% matched_issues = SkillsMatcherHelper.find_available_issues(User.current) %>
+<% filters = SkillsMatcherHelper.filters_for_user(User.current) %>
+<h3><%=l(:label_available_to_me_issues)%> (<%= matched_issues.size %>)</h3>
 
-<%= render :partial => 'issues/list_simple', :locals => { :issues => available_issues } %>
-<% if available_issues.length > 0 %>
-<p class="small"><%= link_to l(:label_find_qualifying_issues), :controller => 'issues',
-														 :action => 'index',
-														 :set_filter => 1,
-														 :assigned_to_id => '!*',
-														 :sort => 'priority:desc,updated_on:desc' %></p>
-<% end %>
+<%= render :partial => 'skills_matcher/list_issues_simple', :locals => { :issues => matched_issues } %>
+
+
+<p class="small"><%= link_to l(:label_find_qualifying_issues), :controller => 'skills_matcher',
+														 :action => 'find_issues_by_filter',
+														 :filter => filters %></p>
+
+<%= form_tag :controller => "skills_matcher", :action => :find_issues_by_filter %>
+	<% count = 0 %>
+	<% filters.each do |filter| %>
+		<% count += 1 %>
+		<%= hidden_field_tag "cb_#{count}", "1" %>
+		<%= hidden_field_tag "skills_#{count}", filter.skill.nil? ? "nootherskills" : filter.skill.name %>
+		<%= hidden_field_tag "operators_#{count}", "<=" %>
+		<%= hidden_field_tag "levels_#{count}", filter.level %>
+	<% end %>
+
+<%= submit_tag l(:label_find_qualifying_issues) %>
 
 <% content_for :header_tags do %>
 <%= auto_discovery_link_tag(:atom, 
