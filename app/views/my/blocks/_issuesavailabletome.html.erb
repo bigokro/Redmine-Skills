@@ -4,10 +4,11 @@
 
 <%= render :partial => 'skills_matcher/list_issues_simple', :locals => { :issues => matched_issues } %>
 
-
+<!--
 <p class="small"><%= link_to l(:label_find_qualifying_issues), :controller => 'skills_matcher',
 														 :action => 'find_issues_by_filter',
 														 :filter => filters %></p>
+-->
 
 <%= form_tag :controller => "skills_matcher", :action => :find_issues_by_filter %>
 	<% count = 0 %>
@@ -19,7 +20,7 @@
 		<%= hidden_field_tag "levels_#{count}", filter.level %>
 	<% end %>
 
-<%= submit_tag l(:label_find_qualifying_issues) %>
+<%= link_to l(:label_find_qualifying_issues), "#", :onclick => "this.parentNode.submit();" %>
 
 <% content_for :header_tags do %>
 <%= auto_discovery_link_tag(:atom, 

@@ -58,33 +58,51 @@ module SkillsMatcherHelper
   end
 
   def self.find_issues_by_filters filters, sort_criteria = nil, count_only = false
+    skill_ids = filters.reject{|f| f.skill.nil?}.collect{|f| f.skill.id}
+    listable_status_ids = IssueStatus.all.collect{ |s| Setting['plugin_redmine_skills']['assignable_status_' + s.name.gsub(" ", "_").downcase] == "1" ? s.id : nil}.compact
+    assignable_projects_condition = ''
+#      if Setting['plugin_redmine_skills']['view_only_assignable_issues'] == "1"
+#        project_ids = Project.all.collect{ |p| p.assignable_users.include?(user) ? p.id : nil }.compact
+#        project_ids << 0 # the case of a user assignable to no projects
+#        assignable_projects_condition = "AND project_id IN (#{project_ids.join(',')})"
+#      end
     ordered = filters.sort{ |a,b| b.rarity <=> a.rarity }
-    condition = "1 = 1"
-    unless filters.empty?
-      condition = ordered[0].where_condition "rs"
+    condition = ""
+    if !ordered.empty? && ordered[0].kind_of?(NoOtherSkillsFilter)
+      condition = "AND " + ordered[0].where_condition("rs")
     end
     if count_only
       Issue.count_by_sql(["
         SELECT COUNT(DISTINCT i.id)
           FROM issues i
           LEFT JOIN required_skills rs ON i.id = rs.issue_id
-         WHERE #{condition}
+         WHERE status_id IN (?)
+           #{condition}
+           #{assignable_projects_condition}
            -- Only issues with at least one rs are considered assignable
            AND 0 < (SELECT COUNT(*) 
                       FROM required_skills rs2
                      WHERE i.id = rs2.issue_id
-              )"])
+                       AND rs2.skill_id IN (?)
+              )",
+              listable_status_ids,
+              skill_ids])
     else
       issues = Issue.find_by_sql(["
         SELECT DISTINCT i.id
           FROM issues i
           LEFT JOIN required_skills rs ON i.id = rs.issue_id
-         WHERE #{condition}
+         WHERE status_id IN (?)
+           #{condition}
+           #{assignable_projects_condition}
            -- Only issues with at least one rs are considered assignable
            AND 0 < (SELECT COUNT(*) 
                       FROM required_skills rs2
                      WHERE i.id = rs2.issue_id
-              )"])
+                       AND rs2.skill_id IN (?)
+              )",
+              listable_status_ids,
+              skill_ids])
       issues = issues.collect{|i| Issue.find_by_id(i.id)}
       issues = SkillsMatcherHelper.filter_issues issues, filters
       return sort_issues_by_criteria issues, sort_criteria
@@ -102,14 +120,14 @@ module SkillsMatcherHelper
   # The initial list is generated from the database based on the user's skills (but not levels)
   # This is then passed through a finer filter (in memory) using the Skill Filters
   def self.find_available_issues user
-      user_skill_ids = user.user_skills.collect{|us| us.skill_id}
-      listable_status_ids = IssueStatus.all.collect{ |s| Setting['plugin_redmine_skills']['assignable_status_' + s.name.gsub(" ", "_").downcase] == "1" ? s.id : nil}.compact
-      assignable_projects_condition = ''
-      if Setting['plugin_redmine_skills']['view_only_assignable_issues'] == "1"
-        project_ids = Project.all.collect{ |p| p.assignable_users.include?(user) ? p.id : nil }.compact
-        project_ids << 0 # the case of a user assignable to no projects
-        assignable_projects_condition = "AND project_id IN (#{project_ids.join(',')})"
-      end
+#      user_skill_ids = user.user_skills.collect{|us| us.skill_id}
+#      listable_status_ids = IssueStatus.all.collect{ |s| Setting['plugin_redmine_skills']['assignable_status_' + s.name.gsub(" ", "_").downcase] == "1" ? s.id : nil}.compact
+#      assignable_projects_condition = ''
+#      if Setting['plugin_redmine_skills']['view_only_assignable_issues'] == "1"
+#        project_ids = Project.all.collect{ |p| p.assignable_users.include?(user) ? p.id : nil }.compact
+#        project_ids << 0 # the case of a user assignable to no projects
+#        assignable_projects_condition = "AND project_id IN (#{project_ids.join(',')})"
+#      end
 #      matched_issues = Issue.find_by_sql(["
 #        SELECT * 
 #          FROM issues i 
@@ -138,7 +156,7 @@ module SkillsMatcherHelper
   
   # Removes issues from a list based on an array of SkillFilters
   def self.filter_issues issues, filters
-    issues.select{ |i| filters.select{|f| f.excludes? i.required_skills }.empty? }
+    issues.select{ |i| filters.select{|f| f.excludes? (i.required_skills, false) }.empty? }
   end
   
   # Returns an array of SkillFilters based on the required skills
@@ -148,15 +166,15 @@ module SkillsMatcherHelper
   # TODO: implement the implicit levels config
   def self.filters_for_issue issue
     filters = issue.required_skills.collect do |rs|
-      unless rs.level == 1
-        f = SkillFilter.new
-        f.skill = rs.skill
-        f.level = rs.level
-        f.operator = ">="
-        f
-      end
+      f = SkillFilter.new
+      f.skill = rs.skill
+      f.level = rs.level
+      f.operator = ">="
+      f
     end
-    filters.compact
+    filters = filters.compact
+    relevant_filters = filters.select{|f| f.level > 1}
+    relevant_filters.empty? ? filters : relevant_filters
   end
 
   def filters_for_issue issue
@@ -211,13 +229,15 @@ module SkillsMatcherHelper
     sorted_issues = issues
     sort_criteria.to_param.split(',').reverse.each do |c|
       field = c.split(':')[0]
-      if ["id", "issue", "tracker.name", "status"].include? field
+      if ["id", "subject", "project.name", "tracker.name", "status"].include? field
         sorted_issues.sort!{|x,y| eval("x.#{field}") <=> eval("y.#{field}")}
       else
         sorted_issues.sort! do |x,y|
           x_required_skill = x.required_skills.select{|us| us.skill.name == field}[0]
           y_required_skill = y.required_skills.select{|us| us.skill.name == field}[0]
-          x_required_skill.level <=> y_required_skill.level
+          x_level = x_required_skill.nil? ? -1 : x_required_skill.level
+          y_level = y_required_skill.nil? ? -1 : y_required_skill.level
+          x_level <=> y_level
         end
       end
       sorted_issues.reverse! if c.ends_with?(":desc")

@@ -6,14 +6,16 @@
 <% end %>
 
 <table class="list">
-<% numcols = 1 + @filters.length %>
+<% column_filters = @filters.reject{|f| f.skill.nil? || f.operator == "!*"} %>
+<% numcols = 1 + column_filters.length %>
 <thead>
 <tr>
 	<%= sort_header_tag('id', :caption => '#', :default_order => 'asc') %>
+	<%= sort_header_tag('project.name', :caption => l(:label_project), :default_order => 'asc') %>
 	<%= sort_header_tag('tracker.name', :caption => l(:label_tracker), :default_order => 'asc') %>
 	<%= sort_header_tag('subject', :caption => l(:label_issue), :default_order => 'asc') %>
 	<%= sort_header_tag('status.name', :caption => l(:label_issue_status), :default_order => 'asc') %>
-	<% @filters.each do |filter| %>
+	<% column_filters.each do |filter| %>
 		<%= sort_header_tag(filter.skill.name, 
 				:caption => "#{filter.skill.name} #{l(SkillFilter::OPERATORS[filter.operator])} #{filter.level}", 
 				:default_order => 'desc') %>
@@ -29,15 +31,18 @@
 <% else %>
 	<% for i in @matched_issues %>
 	  <tr class="<%= cycle("odd", "even") %>">
-	  	<td><%= i.id %></td>
-	  	<td><%= i.tracker.name %></td>
-	  	<td>
+		<td class="id">
+			<%= link_to i.id, :controller => 'issues', :action => 'show', :id => i %>
+		</td>
+		<td class="project"><%= link_to(h(i.project), :controller => 'projects', :action => 'show', :id => i.project) %></td>
+		<td class="tracker"><%=h i.tracker %></td>
+		<td class="subject">
 	  		<%= link_to i.subject, 
 				{ :controller => 'issues', :action => 'show', :id => i }
 			%>
 		</td>
 	  	<td><%= i.status %></td>
-  		<% @filters.each do |filter| %>
+  		<% column_filters.each do |filter| %>
 		<% rskills = i.required_skills.select{|rs| rs.skill == filter.skill} %>
 		<td>
 			<% if rskills.nil? || rskills.empty? %>

@@ -116,7 +116,7 @@ class NoOtherSkillsFilter < SkillFilter
   # excluded by this filter
   # TODO: Configuration for the case of implicit skills (i.e. a required skill of level 1)
   def excludes? skill_level_list, no_match_result = true
-    filter_skills = @filters.collect{ |f| f.skill }
+    filter_skills = filters.collect{ |f| f.skill }
     unmatched_skills = skill_level_list.select do |sl|
       (sl.level > 1) && !(filter_skills.include? sl.skill)
     end
@@ -124,12 +124,16 @@ class NoOtherSkillsFilter < SkillFilter
   end
   
   def where_condition table_alias
-    skill_ids = @filters.collect{|f| f.skill.nil? ? nil : f.skill.id }.compact
-    "0 = (SELECT COUNT(*)
+    skill_ids = filters.collect{|f| f.skill.nil? ? nil : f.skill.id }.compact
+    if skill_ids.empty?
+      "0 = 1"
+    else
+      "0 = (SELECT COUNT(*)
                       FROM required_skills reqs
                      WHERE i.id = reqs.issue_id 
                        AND reqs.level > 1 
                        AND reqs.skill_id NOT IN (#{skill_ids.join(',')}) 
-    )"
+      )"
+    end
   end
 end

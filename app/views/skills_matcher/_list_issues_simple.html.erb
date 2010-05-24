@@ -16,14 +16,14 @@
 <% else %>
 	<% for i in issues %>
 	  <tr class="<%= cycle("odd", "even") %>">
-	  	<td><%= i.id %></td>
-	  	<td><%= i.tracker.name %></td>
-	  	<td>
-	  		<%= link_to i.subject, 
-				{ :controller => 'issues', :action => 'show', :id => i }
-			%>
+		<td class="id">
+			<%= link_to i.id, :controller => 'issues', :action => 'show', :id => i %>
 		</td>
-	  	<td><%= i.status %></td>
+		<td class="project"><%= link_to(h(i.project), :controller => 'projects', :action => 'show', :id => i.project) %></td>
+		<td class="tracker"><%=h i.tracker %></td>
+		<td class="subject">
+	        <%= link_to h(truncate(i.subject, :length => 60)), :controller => 'issues', :action => 'show', :id => i %> (<%=h i.status %>)
+	  	</td>
 		<td>
 			<% if i.required_skills.nil? || i.required_skills.empty? %>
 				&nbsp;

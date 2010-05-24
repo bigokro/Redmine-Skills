@@ -142,6 +142,44 @@ class SkillsMatcherHelperTest < ActionView::TestCase
     assert_equal user, filtered_users[0]
   end
 
+  def test_filter_issues_qualified_user
+    issue = sample_issue
+    user = sample_user
+    filters = SkillsMatcherHelper.filters_for_user user
+    filtered_issues = SkillsMatcherHelper.filter_issues [issue], filters
+    assert_equal 1, filtered_issues.size
+    assert_equal issue, filtered_issues[0]
+  end
+
+  def test_filter_issues_qualified_user_extra_skills
+    issue = sample_issue
+    issue.required_skills.delete_at(0)
+    user = sample_user
+    filters = SkillsMatcherHelper.filters_for_user user
+    filtered_issues = SkillsMatcherHelper.filter_issues [issue], filters
+    assert_equal 1, filtered_issues.size
+    assert_equal issue, filtered_issues[0]
+  end
+
+  def test_filter_issues_unqualified_user_missing_skill
+    issue = sample_issue
+    user = sample_user
+    user.user_skills.delete_at(0)
+    filters = SkillsMatcherHelper.filters_for_user user
+    filtered_issues = SkillsMatcherHelper.filter_issues [issue], filters
+    assert_true filtered_issues.empty?
+  end
+
+  def test_filter_issues_unqualified_user_inadequate_skill
+    issue = sample_issue
+    user = sample_user
+    user.user_skills[0].level -= 1
+    filters = SkillsMatcherHelper.filters_for_user user
+    filtered_issues = SkillsMatcherHelper.filter_issues [issue], filters
+    assert_true filtered_issues.empty?
+  end
+
+
   private
   
   def add_skill ulevel, ilevel, skill = @skill, user = @user, issue = @issue
@@ -160,6 +198,22 @@ class SkillsMatcherHelperTest < ActionView::TestCase
   def sample_user
     user = User.new
     user.login = "testuser"
+    user.user_skills = test_skills().collect do |s|
+      UserSkill.new(:user => user, :level => 3, :skill => s)
+    end
+    return user
+  end
+
+  def sample_issue
+    issue = Issue.new
+    issue.subject = "Test issue"
+    issue.required_skills = test_skills().collect do |s|
+      RequiredSkill.new(:issue => issue, :level => 3, :skill => s)
+    end
+    return issue
+  end
+
+  def test_skills
     unless @test_skills
       @test_skills = [
         Skill.new(:name => "Java"),
@@ -167,9 +221,7 @@ class SkillsMatcherHelperTest < ActionView::TestCase
         Skill.new(:name => "jQuery")
       ]
     end
-    user.user_skills = @test_skills.collect do |s|
-      UserSkill.new(:user => user, :level => 3, :skill => s)
-    end
-    return user
+    @test_skills
   end
+
 end

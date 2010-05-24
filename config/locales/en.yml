@@ -7,7 +7,8 @@ en:
     field_evaluator: Evaluator
     field_user_skill_changes: Changes to user skills
     field_assessment: Evaluation
-    
+    field_no_other_skills_filter: Only (results cannot contain skills other than those on this list)
+
     label_skill: Skill
     label_skills: Skills
     label_new_skill: New skill

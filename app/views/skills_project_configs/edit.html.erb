@@ -19,6 +19,6 @@
 		<%= hidden_field_tag "levels_#{count}", "1" %>
 	<% end %>
 
-<%= submit_tag l(:label_find_users_for_project) %>
+<%= link_to l(:label_find_users_for_project), "#", :onclick => "this.parentNode.submit();" %>
 
 <% html_title(l(:label_skills)) -%>

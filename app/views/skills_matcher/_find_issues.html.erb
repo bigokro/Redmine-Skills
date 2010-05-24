@@ -4,7 +4,9 @@
     <fieldset id="filters" class="collapsible">
     	<legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
     	<div>
-    		<%= render :partial => 'skills_matcher/filters', :locals => {:filters => @filters} %>
+    		<%= render :partial => 'skills_matcher/filters', 
+		           :locals => {:filters => @filters,
+		                       :show_no_others_filter => true} %>
     	</div>
     </fieldset>
 	</div>

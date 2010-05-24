@@ -22,7 +22,7 @@ function add_filter() {
 			}
 		}
     }
-    tb.appendChild(tr);
+    tb.insertBefore(tr, template);
 	tr.setStyle({ display: 'table-row' });
 	
 	// Configure autocompletion
@@ -71,8 +71,8 @@ function toggle_operator(field) {
 	<tbody>
 <% filters = [] if filters.nil? %>
 <% fcount = 0 %>
-<% filters.each do |filter| %>
-	<% fcount += 1 %>
+<% filters.reject{|f|f.skill.nil?}.each do |filter| %>
+    <% fcount += 1 %>
     <tr class="filter">
     <td style="width:200px;">
         <%= check_box_tag "cb_#{fcount}", 1, true, :onclick => "toggle_filter(this);", :id => "cb_#{fcount}" %> 
@@ -104,6 +104,17 @@ function toggle_operator(field) {
         <%= select_tag "levels_", options_for_select(SkillFilter.options_for_levels), {:id => "levels_", :class => "select-small", :style => "vertical-align: top;"} %>
     </td>
     </tr>
+    <% if show_no_others_filter %>
+    <!-- Fields for NoOtherSkillsFilter -->
+    <% fcount += 1 %>
+    <tr class="filter" id="no_others">
+    <td colspan="3">
+        <%= check_box_tag "cb_#{fcount}", 1, filters.select{|f| f.kind_of? NoOtherSkillsFilter}.empty? ? false : true, :id => "cb_#{fcount}" %> 
+	<%= l(:field_no_other_skills_filter) %>
+	<%= hidden_field_tag "skills_#{fcount}", "nootherskills", :id => "skills_#{fcount}" %>
+    </td>
+    </tr>
+    <% end %>
 	</tbody>
 </table>
 </td>

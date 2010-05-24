@@ -41,39 +41,31 @@ class SkillsMatcherController < ApplicationController
     # TODO: handle hierarchical skill relationships
     # TODO: allow configuration of handling of trivial skill level requirements
     @filters = filters_for_issue @issue
-    @matched_users = find_users_by_filters @filters
-    @matched_users = @matched_users.select{|u| !u.anonymous?}
-    refresh_matched_users
+    find_users
   end
 
   def find_users_by_filter
     create_filters_from_params
-
-    sort_init([['user', 'asc']])
-    sort_update(['user'] + @filters.collect{|f| f.skill.name})
-
-    limit = 10
-    @user_count = count_users_by_filters @filters
-    @user_pages = Paginator.new self, @user_count, limit, params['page']
-
-    @matched_users = find_users_by_filters @filters, @sort_criteria
-    @matched_users.reject!{|u| u.anonymous?}
-
-    refresh_matched_users
+    find_users
   end
 
   def find_issues_by_filter
     create_filters_from_params
 
     sort_init([['id', 'asc']])
-    sort_update(['id', 'issue'] + @filters.collect{|f| f.skill.name})
+    sort_update(['id', 'project.name', 'tracker.name', 'status.name', 'subject'] + @filters.reject{|f| f.skill.nil?}.collect{|f| f.skill.name})
 
-    limit = 10
-    @issue_count = count_issues_by_filters @filters
-    @issue_pages = Paginator.new self, @issue_count, limit, params['page']
+    @issue_count = 0
+    @matched_issues = []
 
-    # TODO: filter by statuses?
-    @matched_issues = find_issues_by_filters @filters, @sort_criteria
+    unless @filters.empty?
+      limit = 10
+      @issue_count = count_issues_by_filters @filters
+      @issue_pages = Paginator.new self, @issue_count, limit, params['page']
+      
+      # TODO: filter by statuses?
+      @matched_issues = find_issues_by_filters @filters, @sort_criteria
+    end
 
     refresh_matched_issues
   end
@@ -114,15 +106,39 @@ class SkillsMatcherController < ApplicationController
   def create_filters_from_params
     @filters = []
     i = 1
-    while !params["levels_#{i}"].nil? do
+    while !params["skills_#{i}"].nil? do
       if params["cb_#{i}"]
-        skill = Skill.find_by_name(params["skills_#{i}"])
-        @filters << SkillFilter.new(:skill => skill, 
-                                    :operator => params["operators_#{i}"],
-                                    :level => params["levels_#{i}"].to_i)
+        name = params["skills_#{i}"]
+        if name == "nootherskills"
+          nomore = NoOtherSkillsFilter.new
+          nomore.filters = @filters
+          @filters << nomore
+        else
+          skill = Skill.find_by_name(name)
+          @filters << SkillFilter.new(:skill => skill, 
+                                      :operator => params["operators_#{i}"],
+                                      :level => params["levels_#{i}"].to_i)
+        end
       end
       i += 1
     end
   end
 
+  def find_users
+    sort_init([['user', 'asc']])
+    sort_update(['user'] + @filters.collect{|f| f.skill.name})
+
+    @user_count = 0
+
+    unless @filters.empty?
+      limit = 10
+      @user_count = count_users_by_filters @filters
+      @user_pages = Paginator.new self, @user_count, limit, params['page']
+      
+      @matched_users = find_users_by_filters @filters, @sort_criteria
+      @matched_users.reject!{|u| u.anonymous?}
+    end
+    
+    refresh_matched_users
+  end
 end
