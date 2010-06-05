@@ -2,6 +2,8 @@
 class SkillsMatcherController < ApplicationController
   unloadable
   
+  before_filter :authorize_global
+
   helper :skills
   include SkillsHelper
   include SkillsMatcherHelper

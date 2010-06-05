@@ -4,6 +4,7 @@ class SkillsProjectConfigsController < ApplicationController
   menu_item :skills
 
   before_filter :load_project
+  before_filter :authorize
 
   helper :skills
 

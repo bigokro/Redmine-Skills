@@ -2,7 +2,7 @@ class RequiredSkillsController < ApplicationController
   unloadable
   
   before_filter :load_model
-  before_filter :authorize, :except => ['assign_user']
+  before_filter :authorize
   
   include SkillsMatcherHelper
 

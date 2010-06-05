@@ -1,5 +1,6 @@
 <% has_level = (!@skills.nil?) && (@skills.size > 0) && (!@skills[0].kind_of? Skill) %>
 
+<% if authorize_globally_for(:skills, :index) %>
 <table class="list">
   <thead><tr>
 	<th><%= l(:label_skill) %></th>
@@ -33,3 +34,4 @@
 <% end %>
   </tbody>
 </table>
+<% end %>

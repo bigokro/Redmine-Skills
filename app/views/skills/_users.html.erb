@@ -1,3 +1,4 @@
+<% if authorize_globally_for(:user_skills, :show) %>
 <% form_tag( {:controller => 'user_skills', :action => 'show'}, :method => :get) do %>
 <fieldset class="box"><legend><%=l(:label_view_user_skills)%></legend>
 
@@ -7,7 +8,11 @@
 </p>
 </fieldset>
 <% end %>
+<% end %>
 
+
+<% if authorize_globally_for(:skills_matcher, :find_users_by_filter) %>
 <fieldset class="box"><legend><%=l(:label_find_users)%></legend>
 	<%= link_to(l(:label_find_users_by_filter), :controller => "skills_matcher", :action => "find_users_by_filter") %>
 </fieldset>
+<% end %>

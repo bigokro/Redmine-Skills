@@ -21,19 +21,27 @@ Redmine::Plugin.register :redmine_skills do
 
   project_module :skills do
     permission :manage_skills, {
-                    :skills => [:new, :edit, :destroy],
+                    :skills => [:new, :edit, :destroy]
+                }
+    permission :manage_skills_on_issues, {
+                    :skills => [:new],
                     :skills_project_configs => [:edit],
-                    :required_skills => [:add, :remove]
+                    :required_skills => [:add, :remove, :assign_user],
+                    :skills_matcher => [:find_users_for_issue]
                 }
     permission :manage_user_skills, {
                     :user_skills => [:show],
-                    :user_skill_evaluations => [:new]
+                    :user_skill_evaluations => [:new],
+                    :skills_matcher => [:find_users_for_issue, :find_users_by_filter]
                 }
     permission :view_skills, {
-                    :skills => [:index, :show ]
+                    :skills => [:index, :show ],
+                    :skills_matcher => [:find_issues_for_user, :find_issues_by_filter]
                 }
     permission :view_own_skills, {
-                    :user_skills => [:show]
+                    :skills => [:index, :show ],
+                    :user_skills => [:show],
+                    :skills_matcher => [:find_issues_for_user, :find_issues_by_filter]
                 }
   end
 

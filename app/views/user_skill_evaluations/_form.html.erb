@@ -1,6 +1,5 @@
-<!-- TODO: :view_own_skills or :manage_user_skills -->
-<!-- Problem: no project associated with this page, and therefore no role! -->
-<!-- % if authorize_for(:view_own_skills) % -->
+<% if authorize_globally_for('user_skills', :show) &&
+      (authorize_globally_for('user_skill_evaluations', :new) || @user == User.current) %>
 
 <div class="contextual">
 	<% if authorize_globally_for('user_skill_evaluations', :new) %>
@@ -98,4 +97,6 @@
 	
 <% content_for :header_tags do %>
 	<%= autocomplete_skills_for "user_skill_evaluation_new_user_skill_change_attributes_#{new_change_id}_name", "autocomplete_div" %>
+<% end %>
+
 <% end %>

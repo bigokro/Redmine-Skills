@@ -1,14 +1,17 @@
+<% if authorize_for(:skills_project_configs, :edit) %>
 <% labelled_tabular_form_for :skills_project_config, @skill_project_config, :url => { :action => "edit", :id => @project } do |f| %>
 <%= render :partial => 'form', :locals => { :f => f } %>
-<%= submit_tag l(:button_save), :tabindex => autotab %>
-<% end %>
+<%= submit_tag l(:button_save) %>
 
 <p>&nbsp;</p>
+<% end %>
+<% end %>
 
 <h2><%=l(:label_project_skills_required)%></h2>
 
 <%= render :partial => 'skills/list', :locals => { :skills => @skills } %>
 
+<% if authorize_for(:skills_matcher, :find_users_by_filter) %>
 <%= form_tag :controller => "skills_matcher", :action => :find_users_by_filter %>
 	<% count = 0 %>
 	<% @skills.each do |skill| %>
@@ -20,5 +23,7 @@
 	<% end %>
 
 <%= link_to l(:label_find_users_for_project), "#", :onclick => "this.parentNode.submit();" %>
+
+<% end %>
 
 <% html_title(l(:label_skills)) -%>

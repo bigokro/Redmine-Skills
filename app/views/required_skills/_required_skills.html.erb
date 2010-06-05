@@ -1,3 +1,4 @@
+<% if authorize_for(:skills, :show) %>
 <div id="required_skills">
 <hr />
 
@@ -77,7 +78,7 @@
 <% end %>
 <% end %>
 
-<% if authorize_for('issues', 'edit') %>
+<% if @issue.required_skills.any? && authorize_for('required_skills', 'assign_user') %>
 	<p><%= link_to l(:label_find_assignees), { :controller => 'skills_matcher', :action => :find_users_for_issue, :issue_id => @issue, :assign_to_issue => "true" } %></p>
 <% end %>
 
@@ -96,3 +97,4 @@
 	<% end %>
 <% end %>
 
+<% end %>

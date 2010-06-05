@@ -1,3 +1,5 @@
+<% if User.current.allowed_to?({:controller => :skills_matcher, :action => :find_issues_for_user}, nil, :global => true) %>
+
 <% matched_issues = SkillsMatcherHelper.find_available_issues(User.current) %>
 <% filters = SkillsMatcherHelper.filters_for_user(User.current) %>
 <h3><%=l(:label_available_to_me_issues)%> (<%= matched_issues.size %>)</h3>
@@ -27,4 +29,6 @@
                             {:controller => 'issues', :action => 'index', :set_filter => 1,
                              :assigned_to_id => 'me', :format => 'atom', :key => User.current.rss_key},
                             {:title => l(:label_assigned_to_me_issues)}) %>
+<% end %>
+
 <% end %>
