@@ -1,3 +1,5 @@
+<% unless @project.enabled_modules.select{ |m| m.name == "skills" }.empty? %>
+
 <% if authorize_for(:skills, :show) %>
 <div id="required_skills">
 <hr />
@@ -95,6 +97,8 @@
 	  });
 	</script>
 	<% end %>
+<% end %>
+
 <% end %>
 
 <% end %>
