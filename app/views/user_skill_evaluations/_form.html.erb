@@ -93,10 +93,11 @@
 	<% end %>
 	</table>
 	
+	<%= autocomplete_skills_for "user_skill_evaluation_new_user_skill_change_attributes_#{new_change_id}_name", "autocomplete_div" %>
 </div>
 	
 <% content_for :header_tags do %>
-	<%= autocomplete_skills_for "user_skill_evaluation_new_user_skill_change_attributes_#{new_change_id}_name", "autocomplete_div" %>
+        <% stylesheet_link_tag 'autocomplete', :plugin => 'redmine_skills' %>
 <% end %>
 
 <% end %>

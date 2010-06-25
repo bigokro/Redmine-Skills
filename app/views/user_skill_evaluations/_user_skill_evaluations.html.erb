@@ -6,7 +6,6 @@
 		  <thead>
 			  <tr>
 			  	<th><%= l(:label_evaluation_date) %></th>
-				<th><%= l(:label_evaluator) %></th>
 				<th><%= l(:label_assessment) %></th>
 				<th><%= l(:label_user_skill_changes) %></th>
 			  </tr>
@@ -14,8 +13,12 @@
 		  <tbody>
 			<% @user_skill_evaluations.each do |eval| %>
 			  <tr class="<%= cycle("odd", "even") %>">
-			  	<td><%= eval.created_on %></td>
-				<td><%= link_to eval.evaluator.name, :controller => 'users', :action => :show, :id => @user %></td>
+			  	<td><%= l(:label_evaluation_time_by, 
+					  :age => time_tag(eval.created_on), 
+				          :author => link_to(eval.evaluator.name, 
+				                             :controller => 'users', 
+				                             :action => :show, 
+				                             :id => @user)) %></td>
 				<td><%= text = h(eval.assessment); text.length > 100 ? text[0..96] + '...' : text %></td>
 				<td>
 					<ul>

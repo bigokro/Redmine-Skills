@@ -28,7 +28,7 @@
 			<% if i.required_skills.nil? || i.required_skills.empty? %>
 				&nbsp;
 			<% else %>
-				<%= i.required_skills.collect{ |rs| "#{rs.name}: #{rs.level}" }.join(',') %>
+				<%= i.required_skills.collect{ |rs| "#{rs.name}: #{rs.level}" }.join(', ') %>
 			<% end %>
 		</td>
 	  </tr>

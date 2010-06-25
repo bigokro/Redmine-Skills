@@ -34,18 +34,20 @@ module SkillsHelper
     active_skills = Skill.all_active
     if active_skills
       <<-eos
-        #{stylesheet_link_tag 'autocomplete', :plugin => 'redmine_skills'}
         <script>
-          document.observe("dom:loaded", function() {
             var data = "#{active_skills.collect{|s| s.name}.join(',')}".split(",");
             new Autocompleter.Local("#{element_id}", "#{options_element_id}", data, {partialChars: 2, choices: 20});
-          });
         </script>
       eos
     else
       ""
     end
   end
+
+  def users_for_skills_select
+    User.find(:all, :order => "login").reject{|u| u.anonymous? || u.login == 'admin'}
+  end
+
   
   def self.configuration_issue_statuses
       IssueStatus.all.collect{ |s| Setting['plugin_redmine_skills']['assignable_status_' + s.name.gsub(" ", "_").downcase] == "1" ? s : nil}.compact

@@ -1,0 +1,8 @@
+<h3><%= l(:label_user_plural) %></h3>
+
+<% form_tag( {:controller => 'user_skills', :action => 'show'}, :method => :get) do %>
+<p>
+	<%= select :user, :id, @users.collect {|u| [ "#{u.name} (#{u.login})", u.id ] } %>
+	<%= submit_tag l(:button_submit), :onclick => "window.location.href = '" + url_for(:controller => 'user_skills', :action => 'show') + "?user_id=' + $('user_id').getValue(); return false;" %>
+</p>
+<% end %>

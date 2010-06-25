@@ -1,4 +1,4 @@
-<% unless @project.enabled_modules.select{ |m| m.name == "skills" }.empty? %>
+<% if @project.module_enabled?("skills") %>
 
 <% if authorize_for(:skills, :show) %>
 <div id="required_skills">
@@ -77,6 +77,13 @@
 	<%= rs.select :level, (1..5).to_a%>
 	<%= submit_tag l(:button_add) %>
 	<%= toggle_link l(:button_cancel), 'add-skill-form'%>
+
+	<% active_skills = Skill.all_active %>
+	<script>
+	  var data = "<%= active_skills.collect{|s| s.name}.join(',')%>".split(",");
+	  new Autocompleter.Local("required_skill_name", "required_skill_name_autocomplete", data, {partialChars: 2, choices: 20});
+	</script>
+
 <% end %>
 <% end %>
 
@@ -87,16 +94,7 @@
 </div>
 
 <% content_for :header_tags do %>
-	<% active_skills = Skill.all_active %>
-	<% if active_skills %>
     <%= stylesheet_link_tag 'autocomplete', :plugin => 'redmine_skills' %>
-	<script>
-	  document.observe("dom:loaded", function() {
-		var data = "<%= active_skills.collect{|s| s.name}.join(',')%>".split(",");
-		new Autocompleter.Local("required_skill_name", "required_skill_name_autocomplete", data, {partialChars: 2, choices: 20});
-	  });
-	</script>
-	<% end %>
 <% end %>
 
 <% end %>

@@ -9,13 +9,14 @@ class UserSkillsController < ApplicationController
   include UserSkillEvaluationsHelper
 
   def index
-    @users = User.find(:all, :order => "login")
+    @users = users_for_skills_select
   end
 
   def show
-     @projects = user_projects
-     @user_skill_evaluation = new_user_skill_evaluation_for_form @user
-     @user_skill_evaluations = user_skill_evaluations_for_list @user 
+    @issues = user_issues
+    @users = users_for_skills_select
+    @user_skill_evaluation = new_user_skill_evaluation_for_form @user
+    @user_skill_evaluations = user_skill_evaluations_for_list @user 
   end
 
   private 
@@ -25,10 +26,10 @@ class UserSkillsController < ApplicationController
     @user = User.find(user_id)
   end
   
-  def user_projects
-    Project.all.select{|p| p.assignable_users.include? @user}
+  def user_issues
+    Issue.find_all_by_assigned_to_id(@user.id, :order => :project_id ).reject{|i| i.required_skills.empty?}
   end
-  
+
   def authorize_global
     authorize params[:controller], params[:action], :global => true
   end

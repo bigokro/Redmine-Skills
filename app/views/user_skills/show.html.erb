@@ -5,7 +5,7 @@
 </div>
 
 <div class="issue details">
-	<h3><%=l(:label_project_plural)%></h3>
+	<h3><%=l(:label_issues_with_skills)%></h3>
 	<%= render :partial => 'user_skills/user_issues', :locals => { :user => @user } %>
 </div>
 
@@ -13,7 +13,7 @@
 
 <div class="splitcontentright">
 <% content_for :sidebar do %>
-	<!-- TODO: Show in hierarchy (at least parent and immediate children) -->
+    <%= render :partial => 'user_skills/sidebar' %>
 <% end %>
 
 <% content_for :header_tags do %>

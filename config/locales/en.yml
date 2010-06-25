@@ -41,6 +41,8 @@ en:
     label_find_users_for_project: Find users for this project
     label_find_issues: Find issues
     label_find_issues_by_filter: Find issues by required skills
+    label_issues_with_skills: Skill-related Issues
+    label_evaluation_time_by: "{{age}} ago by {{author}}"
     
     button_manage_user_skills: Submit an evaluation
     button_submit_evaluation: Submit evaluation

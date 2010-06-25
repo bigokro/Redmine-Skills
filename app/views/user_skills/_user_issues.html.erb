@@ -2,29 +2,35 @@
   <thead><tr>
 	<th><%= l(:label_project) %></th>
 	<th><%= l(:label_issue) %></th>
+	<th><%= l(:label_skills_required) %></th>
   </tr></thead>
   <tbody>
-<% for p in @projects %>
-  <tr class="<%= cycle("odd", "even") %>">
+<% pLast = nil %>
+<% for i in @issues %>
+<% p = i.project %>
+  <% if p != pLast %>
+    <% pLast = p %>
+    <tr class="<%= cycle("odd", "even") %>">
   	<td>
   		<%= link_to p.name, 
 			{ :controller => 'projects', :action => 'show', :id => p }
 		%>
 	</td>
 	<td></td>
-  </tr>
-	<% for i in p.issues %>
-	  <% if i.assigned_to == @user %>
+	<td></td>
+    </tr>
+  <% end %>
 	  <tr class="<%= cycle("odd", "even") %>">
-		<td></td>
-	  	<td>
-	  		<%= link_to "#{i.tracker.name} ##{i.id} (#{i.status}): #{i.subject}", 
-				{ :controller => 'issues', :action => 'show', :id => i }
-			%>
-		</td>
+	    <td></td>
+	    <td>
+	      <%= link_to "#{i.tracker.name} ##{i.id} (#{i.status}): #{i.subject}", 
+		  { :controller => 'issues', :action => 'show', :id => i }
+	      %>
+	    </td>
+	    <td>
+		<%= i.required_skills.collect{ |rs| "#{rs.name}: #{rs.level}" }.join(', ') %>
+	    </td>
 	  </tr>
-  	  <% end %>
-	<% end %>
 <% end %>
   </tbody>
 </table>

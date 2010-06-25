@@ -9,7 +9,7 @@ class SkillsController < ApplicationController
 
   def index
     @skills = Skill.find(:all, :conditions => "super_skill_id IS NULL", :order => "name")
-    @users = User.find(:all, :order => "login").select{|u| !u.anonymous?}
+    @users = users_for_skills_select
   end
   
   def show
