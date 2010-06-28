@@ -1,6 +1,42 @@
 <% if authorize_globally_for('user_skills', :show) &&
       (authorize_globally_for('user_skill_evaluations', :new) || @user == User.current) %>
 
+<script type="text/javascript">
+//<![CDATA[
+function add_new_skill() {
+        var basenum = <%= -@user_skill_evaluation.user_skill_changes.length - 1 %>;
+	var fnum = basenum - $$('.new_skill').length;
+	var tb = $('skills_table').firstElementChild;
+	var template = $('form_template');
+	var tr = template.cloneNode(true);
+	tr.id = 'new_skill_' + fnum;
+        tr.addClassName('new_skill');
+        renameNodes(tr, 1234, fnum);
+        tb.insertBefore(tr, template);
+	tr.setStyle({ display: 'table-row' });
+
+	// Configure autocompletion
+	var data = "<%= Skill.all_active.collect{|s| s.name}.join(',') %>".split(",");
+	new Autocompleter.Local("user_skill_evaluation_new_user_skill_change_attributes_" + fnum + "_name", "autocomplete_div_" + fnum, data, {partialChars: 2, choices: 20});
+}
+
+function renameNodes(parent, oldnum, newnum) {
+    var oldid = oldnum + "";
+    var newid = newnum + "";
+    if (parent.id) {
+	parent.id = parent.id.replace(oldid, newid);
+    }
+    if (parent.name) {
+	parent.name = parent.name.replace(oldid, newid);
+    }
+    for (var i = 0; i < parent.childNodes.length; i++) {
+	renameNodes(parent.childNodes[i], oldnum, newnum);
+    }
+}
+
+//]]>
+</script>
+
 <div class="contextual">
 	<% if authorize_globally_for('user_skill_evaluations', :new) %>
 	    <%= 
@@ -21,7 +57,7 @@
 				:url => { :controller => "user_skill_evaluations", :action => "new"}) do |f| %>
 		<%= f.hidden_field :user_id, :value => @user.id %>
 	
-		<table style="width:100%">
+		<table id="skills_table" style="width:100%">
 
 		<% skillcount = 0 %>
 		<% numcols = 3 %>
@@ -56,8 +92,8 @@
 			  </tr>
 			<% end %>
 		<% end %>
-
-		<tr>
+		<!-- New Skill fields -->
+		<tr class="new_skill">
 			<% new_change_id = -@user_skill_evaluation.user_skill_changes.length - 1 %>
 		    <% prefix = "user_skill_evaluation[new_user_skill_change_attributes][#{new_change_id}]" %>
 			<% change = UserSkillChange.new(:id => new_change_id, :old_level => 0, :new_level => 0, :skill => Skill.new)%> 
@@ -65,13 +101,41 @@
 			    <td width="10%"><span style="white-space: nowrap">
 					<%= change_form.label :new_skill %>:
 			    	<%= change_form.text_field :name, :size => 20 %> <%= change_form.select :new_level, (1..5).to_a %> 
-					<div class="autocomplete" id="autocomplete_div" style="display:none"></div>
+					<div class="autocomplete" id="autocomplete_div_<%=new_change_id%>" style="display:none"></div>
 					<%= change_form.hidden_field :old_level %>
 					<%= change_form.hidden_field :skill_id %>
 				</span></td>
-				<td>	</td>
+				<td>
+				  <%= link_to l(:button_add),
+				      "#",
+				      :onclick => "add_new_skill(); $(this).hide();"
+				  %>
+				</td>
+		    <% end %>
+		    <%= autocomplete_skills_for "user_skill_evaluation_new_user_skill_change_attributes_#{new_change_id}_name", "autocomplete_div_#{new_change_id}" %>
+		</tr>
+		<!-- Hidden New Skill form template -->
+                <tr id="form_template" style="display: none;">
+			<% template_change_id = 1234 %>
+		        <% template_prefix = "user_skill_evaluation[new_user_skill_change_attributes][#{template_change_id}]" %>
+			<% template_change = UserSkillChange.new(:id => template_change_id, :old_level => 0, :new_level => 0, :skill => Skill.new)%> 
+		    <% fields_for template_prefix, template_change do |change_form| %>
+			    <td width="10%"><span style="white-space: nowrap">
+					<%= change_form.label :new_skill %>:
+			    	<%= change_form.text_field :name, :size => 20 %> <%= change_form.select :new_level, (1..5).to_a %> 
+					<div class="autocomplete" id="autocomplete_div_<%=template_change_id%>" style="display:none"></div>
+					<%= change_form.hidden_field :old_level %>
+					<%= change_form.hidden_field :skill_id %>
+				</span></td>
+				<td>
+				  <%= link_to l(:button_add),
+				      "#",
+				      :onclick => "add_new_skill(); $(this).hide();"
+				  %>
+				</td>
 		    <% end %>
 		</tr>
+		<!-- Remaining fields and textareas -->
 		<tr>
 		  	<td colspan="<%= numcols * 2 %>">
 		  		<%= f.label :issue_id %> #
@@ -93,7 +157,6 @@
 	<% end %>
 	</table>
 	
-	<%= autocomplete_skills_for "user_skill_evaluation_new_user_skill_change_attributes_#{new_change_id}_name", "autocomplete_div" %>
 </div>
 	
 <% content_for :header_tags do %>
