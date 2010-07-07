@@ -1,3 +1,4 @@
+<% unless issues.empty? %>
 <table class="list">
 <thead>
 <tr>
@@ -11,7 +12,6 @@
   <tbody>
 <% if issues.nil? %>
 		<tr><td colspan="5" style="text-align: center;"><%= l(:text_enter_criteria_for_search) %></td></tr>
-<% elsif issues.empty? %>
 		<tr><td colspan="5" style="text-align: center;"><%= l(:text_no_results_for_search) %></td></tr>
 <% else %>
 	<% for i in issues %>
@@ -36,4 +36,7 @@
 <% end %>
   </tbody>
 </table>
+<% else %>
+<p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>
 

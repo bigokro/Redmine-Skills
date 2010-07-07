@@ -50,18 +50,21 @@ class UserSkillEvaluationsController < ApplicationController
   def handle_new_skills
       index_key = (-params[:user_skill_evaluation][:new_user_skill_change_attributes].length + 1).to_s
       @user_skill_evaluation.user_skill_changes.select{|c| c.skill_id.nil?}.each do |new_change|
-        name = params[:user_skill_evaluation][:new_user_skill_change_attributes][index_key][:name]
-        level = params[:user_skill_evaluation][:new_user_skill_change_attributes][index_key][:new_level].to_i
-        unless name.nil?
-          skill = Skill.find_by_name(name)
-          if skill.nil?
-            skill = Skill.new(:name => name, :active => true)
-            skill.save
+        attr = params[:user_skill_evaluation][:new_user_skill_change_attributes][index_key]
+        unless attr.nil?
+          name = attr[:name]
+          level = attr[:new_level].to_i
+          unless name.nil?
+            skill = Skill.find_by_name(name)
+            if skill.nil?
+              skill = Skill.new(:name => name, :active => true)
+              skill.save
+            end
+            new_change.skill_id = skill.id
+            new_change.new_level = level
           end
-          new_change.skill_id = skill.id
-          new_change.new_level = level
+          index_key = (index_key.to_i + 1).to_s
         end
-        index_key = (index_key.to_i + 1).to_s
       end
   end
 end
