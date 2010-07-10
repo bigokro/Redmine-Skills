@@ -72,4 +72,4 @@ en:
     text_add_skill_warn: The assigned user is unqualified for the new skill requirement. Are you sure you wish to make this change?
     text_add_roles_for_assignment: The selected user is not an assignable member of this project.<br/>Please select one or more of the membership roles below if you wish to add them to this project.
     text_select_available_statuses: Select assignable statuses for searches
-    
+    text_unqualified_assignee_warn: Warning! The assigned user does not meet the skill requirements for this issue.
