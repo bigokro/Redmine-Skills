@@ -30,12 +30,11 @@ class Issue
 end
 
 class IssuesController < ApplicationController
-  before_filter :warn_unqualified, :only => :edit
+  after_filter :warn_unqualified, :only => :edit
 
   private
 
   def warn_unqualified
-    find_issue
     if request.post? && @issue.action_for_assignee == :warn
       flash[:error] = l(:text_unqualified_assignee_warn)
     end
