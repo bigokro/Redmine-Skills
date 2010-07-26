@@ -21,6 +21,7 @@ en:
     label_level: Skill level
     label_project_skills_required: Required skills for this project
     label_max_level_required: Maximum level required
+    label_user_skill_evaluation: Skill evaluation
     label_user_skill_evaluation_plural: Skill evaluations
     label_issue_id: Related Redmine issue id (if relevant)
     label_related_issue: Related issue

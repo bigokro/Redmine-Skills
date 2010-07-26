@@ -6,6 +6,7 @@
 		  <thead>
 			  <tr>
 			  	<th><%= l(:label_evaluation_date) %></th>
+				<th><%= l(:label_issue) %></th>
 				<th><%= l(:label_assessment) %></th>
 				<th><%= l(:label_user_skill_changes) %></th>
 			  </tr>
@@ -19,7 +20,24 @@
 				                             :controller => 'users', 
 				                             :action => :show, 
 				                             :id => @user)) %></td>
-				<td><%= text = h(eval.assessment); text.length > 100 ? text[0..96] + '...' : text %></td>
+				<td>
+				  <% unless eval.issue.nil? %>
+				  <%= link_to "#{eval.issue.tracker.name} ##{eval.issue.id}", 
+				      { :controller => 'issues', :action => 'show', :id => eval.issue }
+				  %>
+				  <% end %>
+				</td>
+				<td>
+				  <%= text = h(eval.assessment)
+				      if text.length > 80
+				          text = text[0..76]
+				          last = text.split.last
+				          text[0..-(last.length+2)] + '... ' + link_to("[#{l(:label_more).downcase}]", { :controller => 'user_skill_evaluations', :action => :show, :id => eval })
+				      else
+				          text
+				      end
+				  %>
+				</td>
 				<td>
 					<ul>
 						<% eval.user_skill_changes.each do |change| %>

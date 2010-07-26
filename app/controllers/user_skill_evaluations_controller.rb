@@ -7,6 +7,11 @@ class UserSkillEvaluationsController < ApplicationController
   include SkillsHelper
   include UserSkillEvaluationsHelper
 
+  def show
+    @user_skill_evaluation = UserSkillEvaluation.find(params[:id])
+    @users = users_for_skills_select
+  end
+
   def new
     @user_skill_evaluation = UserSkillEvaluation.new(params[:user_skill_evaluation])
     @user_skill_evaluation.evaluator_id = User.current.id

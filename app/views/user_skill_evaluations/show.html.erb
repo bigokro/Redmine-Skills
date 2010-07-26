@@ -1,0 +1,54 @@
+<h2><%= link_to @user_skill_evaluation.user.name, :controller => 'user_skills', :action => :show, :user_id => @user_skill_evaluation.user %></h2> 
+	
+<div class="issue details">
+  <h3><%=l(:label_user_skill_evaluation)%> #<%= @user_skill_evaluation.id %></h3>
+
+  <table class="attributes">
+    <tr>
+      <th class="assigned-to"><%=l(:field_evaluator)%>:</th><td class="assigned-to"><%= avatar(@user_skill_evaluation.evaluator, :size => "14") %><%= link_to_user(@user_skill_evaluation.evaluator) %></td>
+      <th class="start-date"><%=l(:label_evaluation_date)%>:</th><td class="start-date"><%= format_date(@user_skill_evaluation.created_on) %></td>
+    </tr>
+    <% i = @user_skill_evaluation.issue %>
+    <% unless i.nil? %>
+    <tr>
+      <th class="issue"><%= l(:label_related_issue) %></th>
+      <td class="issue" colspan="3">
+	<% i = @user_skill_evaluation.issue %>
+	<%= link_to "#{i.tracker.name} ##{i.id} (#{i.status}): #{i.subject}", 
+	    { :controller => 'issues', :action => 'show', :id => i }
+	%>
+      </td>
+    </tr>
+    <tr>
+      <th class="issue"><%= l(:label_skills_required) %></th>
+      <td class="issue" colspan="3">
+	<%= i.required_skills.collect{ |rs| "#{rs.name}: #{rs.level}" }.join(', ') %>
+      </td>
+    </tr>
+    <% end %>
+  </table>
+  <hr />
+
+  <p><strong><%=l(:label_user_skill_changes)%></strong></p>
+  <ul>
+    <% @user_skill_evaluation.user_skill_changes.each do |change| %>
+      <li><%= l("text_user_skill_"+change.type.downcase, :skill => change.skill.name, :old_level => change.old_level, :new_level => change.new_level) %></li>
+    <% end %>
+  </ul>
+  <hr />
+
+  <p><strong><%=l(:label_assessment)%></strong></p>
+  <div class="wiki">
+    <%= textilizable @user_skill_evaluation, :assessment %>
+  </div>
+</div>
+
+
+
+<div class="splitcontentright">
+<% content_for :sidebar do %>
+    <%= render :partial => 'user_skills/sidebar' %>
+<% end %>
+
+
+<% html_title(l(:label_skills)) -%>

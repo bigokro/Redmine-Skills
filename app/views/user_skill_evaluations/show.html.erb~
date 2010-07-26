@@ -1,0 +1,24 @@
+<h2><%= link_to @user.name, :controller => 'users', :action => :show, :id => @user %></h2> 
+	
+<div id="user_skills">
+	<%= render :partial => 'user_skills/user_skills_form', :locals => { :user => @user, :user_skill_evaluations => @user_skill_evaluations, :is_form => true } %>
+</div>
+
+<div class="issue details">
+	<h3><%=l(:label_issues_with_skills)%></h3>
+	<%= render :partial => 'user_skills/user_issues', :locals => { :user => @user } %>
+</div>
+
+
+
+<div class="splitcontentright">
+<% content_for :sidebar do %>
+    <%= render :partial => 'user_skills/sidebar' %>
+<% end %>
+
+<% content_for :header_tags do %>
+	<!-- TODO: a stylsheet for the inactive styles -->
+    <!-- %= stylesheet_link_tag 'arch_decisions', :plugin => 'redmine_arch_decisions' % -->
+<% end %>
+
+<% html_title(l(:label_skills)) -%>
