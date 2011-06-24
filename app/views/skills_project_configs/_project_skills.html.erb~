@@ -12,6 +12,7 @@
 
 <p><strong><%=l(:label_skills_required)%></strong></p>
 
+<%= error_messages_for 'required_skill' %>
 <% if @action == "block" %>
 	<script type="text/javascript">
 		alert("<%= l(:text_add_skill_block) %>");

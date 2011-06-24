@@ -1,6 +1,7 @@
 require 'dispatcher'
 require 'redmine'
 require 'required_skills_issue_patch'
+require 'project_skills_project_patch'
 require 'show_issue_skills_hook'
 require 'update_issue_skills_hook'
 require 'user_skills_user_patch'
@@ -9,6 +10,7 @@ require 'show_user_skills_hook'
 
 Dispatcher.to_prepare do
   Issue.send(:include, IssuePatch)
+  Project.send(:include, ProjectPatch)
   User.send(:include, UserPatch)
   User.send(:include, UserEvaluationPatch)
 end
@@ -25,6 +27,7 @@ Redmine::Plugin.register :redmine_skills do
                 }
     permission :manage_skills_on_issues, {
                     :skills => [:new],
+                    :project_skills => [:add, :edit, :destroy],
                     :skills_project_configs => [:edit],
                     :required_skills => [:add, :remove, :assign_user],
                     :skills_matcher => [:find_users_for_issue]

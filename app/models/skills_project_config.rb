@@ -30,8 +30,8 @@ class SkillsProjectConfig < ActiveRecord::Base
   
   def self.unskilled_action_options
     # TODO: regionalize this
-    return [["None", UNSKILLED_ACTION_NONE], 
+    return [["Allow assignment", UNSKILLED_ACTION_NONE], 
             ["Warn", UNSKILLED_ACTION_WARN], 
-            ["Don't allow", UNSKILLED_ACTION_BLOCK]]
+            ["Block assignment", UNSKILLED_ACTION_BLOCK]]
   end
 end

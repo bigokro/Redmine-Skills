@@ -1,12 +1,18 @@
 <% if authorize_for(:skills_project_configs, :edit) %>
-<% labelled_tabular_form_for :skills_project_config, @skill_project_config, :url => { :action => "edit", :id => @project } do |f| %>
+<% form_for :skills_project_config, @skill_project_config, :url => { :action => "edit", :id => @project } do |f| %>
 <%= render :partial => 'form', :locals => { :f => f } %>
 <%= submit_tag l(:button_save) %>
+<% end %>
+<br/>
+
+<fieldset class="box"><legend><%=l(:label_skills_project)%></legend>
+        <%= render :partial => 'skills_project_configs/project_skills' %>
+</fieldset>
+
+<% end %>
+
 
 <p>&nbsp;</p>
-<% end %>
-<% end %>
-
 <h2><%=l(:label_project_skills_required)%></h2>
 
 <%= render :partial => 'skills/list', :locals => { :skills => @skills } %>

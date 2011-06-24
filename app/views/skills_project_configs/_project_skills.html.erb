@@ -1,0 +1,24 @@
+<% if @project.module_enabled?("skills") %>
+
+
+<div id="project_skills">
+
+<div class="contextual">
+<% if authorize_for('skills_project_configs', 'edit') %>
+    <%= toggle_link l(:button_add), 'add-skill-form', :focus => 'required_skill_name' %>
+<% end %>
+</div>
+
+<%= render :partial => 'required_skills/add_related_skills_form', 
+           :locals => { :related_skills => @project.project_skills, 
+                        :controller => 'project_skills', 
+                        :project => @project,
+                        :related_type => 'project',
+                        :related_id => @project.id,
+                        :has_permission => authorize_for(:skills_project_configs, :edit)
+                      } %>
+
+
+</div>
+
+<% end %>
