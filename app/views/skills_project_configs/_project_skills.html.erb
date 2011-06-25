@@ -5,19 +5,41 @@
 
 <div class="contextual">
 <% if authorize_for('skills_project_configs', 'edit') %>
-    <%= toggle_link l(:button_add), 'add-skill-form', :focus => 'required_skill_name' %>
+    <%= toggle_link l(:button_add), "add-skill-form-nil", :focus => 'related_skill_name-nil' %>
 <% end %>
 </div>
 
+<p><%= l(:label_uncategorized_issues) %></p>
 <%= render :partial => 'required_skills/add_related_skills_form', 
-           :locals => { :related_skills => @project.project_skills, 
+           :locals => { :related_skills => @project.project_skills.select{ |ps| ps.issue_category == nil}, 
                         :controller => 'project_skills', 
                         :project => @project,
                         :related_type => 'project',
                         :related_id => @project.id,
+                        :category => nil,
                         :has_permission => authorize_for(:skills_project_configs, :edit)
                       } %>
 
+
+<% @project.issue_categories.each do |ic| %>
+<div class="contextual">
+<% if authorize_for('skills_project_configs', 'edit') %>
+    <%= toggle_link l(:button_add), "add-skill-form-#{ic.id}", :focus => "related_skill_name-#{ic.id}" %>
+<% end %>
+</div>
+
+<p><%= ic.name %></p>
+<%= render :partial => 'required_skills/add_related_skills_form', 
+           :locals => { :related_skills => @project.project_skills.select{ |ps| ps.issue_category == ic}, 
+                        :controller => 'project_skills', 
+                        :project => @project,
+                        :related_type => 'project',
+                        :related_id => @project.id,
+                        :category => ic,
+                        :has_permission => authorize_for(:skills_project_configs, :edit)
+                      } %>
+
+<% end %>
 
 </div>
 

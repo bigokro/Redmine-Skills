@@ -27,9 +27,9 @@ Redmine::Plugin.register :redmine_skills do
                 }
     permission :manage_skills_on_issues, {
                     :skills => [:new],
-                    :project_skills => [:add, :edit, :destroy],
+                    :project_skills => [:add, :edit, :remove],
                     :skills_project_configs => [:edit],
-                    :required_skills => [:add, :remove, :assign_user],
+                    :required_skills => [:add, :edit, :remove, :assign_user],
                     :skills_matcher => [:find_users_for_issue]
                 }
     permission :manage_user_skills, {

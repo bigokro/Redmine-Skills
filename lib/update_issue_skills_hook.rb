@@ -48,7 +48,7 @@ class UpdateIssueSkillsHook < Redmine::Hook::Listener
   def controller_issues_new_after_save(context={})
     issue = context[:issue]
     project = issue.project
-    project.project_skills.each do |ps|
+    project.project_skills.select{ |ps| ps.issue_category == issue.category}.each do |ps|
       required_skill = RequiredSkill.new(:issue => issue, :skill => ps.skill, :level => ps.level)
       required_skill.save
     end

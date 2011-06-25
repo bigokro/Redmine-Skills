@@ -32,6 +32,7 @@
                         :project => @project,
                         :related_type => 'issue',
                         :related_id => @issue.id,
+                        :category => nil,
                         :has_permission => authorize_for(:required_skills, :add)
                       } %>
 

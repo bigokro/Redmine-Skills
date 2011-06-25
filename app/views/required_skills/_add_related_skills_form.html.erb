@@ -1,4 +1,5 @@
 <%= error_messages_for 'related_skill' %>
+<% category_id = (category && category != nil) ? category.id : nil %>
 <% if related_skills.any? %>
 <table style="width:100%">
 <% skillcount = 0 %>
@@ -9,20 +10,42 @@
   <tr>
   <% end %>
     <td width="10%"><span style="white-space: nowrap">
-    	<%= link_to skill.name, 
+    	<span id="related-skills-<%=rskill.id%>-<%=category_id%>">
+	  <%= link_to skill.name, 
 					{ :controller => 'skills', :action => 'show', :id => skill, :project_id => project }, 
 					:title => h(skill.description)
 		%>: <%= rskill.level %> 
-	</span></td>
+	</span>
+	<spen id="related-skills-<%=rskill.id%>-<%=category_id%>-form" style="display: none;">
+	  <% remote_form_for(:related_skill, rskill, 
+			:url => { :controller => controller, :action => "edit"}
+			) do |rs| %>
+	<%= rs.hidden_field :related_id, :value => related_id %>
+	<%= rs.hidden_field :id, :value => rskill.id %>
+	<%= rs.hidden_field :action, :value => "edit" %>
+	  <%= link_to skill.name, 
+					{ :controller => 'skills', :action => 'show', :id => skill, :project_id => project }, 
+					:title => h(skill.description)
+		%>: 
+	  <%= rs.select :level, (1..5).to_a%>
+
+	  <%= submit_tag l(:button_edit) %>
+	    <small><%= link_to_function l(:button_cancel), "$('related-skills-#{rskill.id}-#{category_id}').show(); $('related-skills-#{rskill.id}-#{category_id}-actions').show(); $('related-skills-#{rskill.id}-#{category_id}-form').hide(); return false;", :class => 'icon icon-cancel' %></small>	
+	    <% end %>
+      </span>
+    </span></td>
 	<td>
-	    <small><%= link_to_remote_if_authorized "", 
+    	<span id="related-skills-<%=rskill.id%>-<%=category_id%>-actions">
+	    <small><%= link_to_function l(:button_edit), "$('related-skills-#{rskill.id}-#{category_id}').hide(); $('related-skills-#{rskill.id}-#{category_id}-actions').hide(); $('related-skills-#{rskill.id}-#{category_id}-form').show(); return false;", :class => 'icon icon-edit' %></small>
+	    <small><%= link_to_remote_if_authorized l(:button_delete), 
 						{ :url => {:controller => controller, 
 									:action => 'remove', 
 									:id => rskill, 
 									(related_type + '_id').to_sym => related_id
 								},
 							:confirm => l(:text_related_skill_remove_confirmation, :name => skill.name)},
-						:class => 'icon icon-del'  %></small>
+	                                                :class => 'icon icon-del'  %></small>
+        </span>
     </td>
 	<td>	</td>
   <% if skillcount % numcols == (numcols-1) %>
@@ -40,21 +63,22 @@
 <% if has_permission %>
 <% remote_form_for(:related_skill, @related_skill, 
 			:url => { :controller => controller, :action => "add"}, 
-			:html => { :id => "add-skill-form", :style => (@related_skill ? '' : 'display: none;') }) do |rs| %>
+			:html => { :id => "add-skill-form-#{category_id}", :style => (@related_skill ? '' : 'display: none;') }) do |rs| %>
 	<%= rs.hidden_field :related_id, :value => related_id %>
+	<%= rs.hidden_field :category_id, :value => category_id %>
 	<%= rs.hidden_field :action, :value => "add" %>
 	<%= l(:label_skill) %>
-	<%= rs.text_field :name, :size => 20, :autocomplete => "off" %>
-	<div class="autocomplete" id="related_skill_name_autocomplete" style="display:none"></div>
+	<%= rs.text_field :name, :size => 20, :autocomplete => "off", :id => "related_skill_name-#{category_id}" %>
+	<div class="autocomplete" id="related_skill_name_autocomplete-<%=category_id%>" style="display:none"></div>
    	<%= l(:label_level) %>
 	<%= rs.select :level, (1..5).to_a%>
 	<%= submit_tag l(:button_add) %>
-	<%= toggle_link l(:button_cancel), 'add-skill-form'%>
+	<%= toggle_link l(:button_cancel), "add-skill-form-#{category_id}"%>
 
 	<% active_skills = Skill.all_active %>
 	<script>
 	  var data = "<%= active_skills.collect{|s| s.name}.join(',')%>".split(",");
-	  new Autocompleter.Local("related_skill_name", "related_skill_name_autocomplete", data, {partialChars: 2, choices: 20});
+	  new Autocompleter.Local("related_skill_name-<%=category_id%>", "related_skill_name_autocomplete-<%=category_id%>", data, {partialChars: 2, choices: 20});
 	</script>
 
 <% end %>

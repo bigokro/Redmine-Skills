@@ -45,7 +45,8 @@ en:
     label_find_issues: Find issues
     label_find_issues_by_filter: Find issues by required skills
     label_issues_with_skills: Skill-related Issues
-    label_evaluation_time_by: "{{age}} ago by {{author}}"
+    label_evaluation_time_by: "%{age} ago by %{author}"
+    label_uncategorized_issues: Uncategorized issues
     
     button_manage_user_skills: Submit an evaluation
     button_submit_evaluation: Submit evaluation
@@ -53,22 +54,22 @@ en:
     button_find_issues: Find issues
     button_assign: Assign user
 
-    notice_successful_assignment: User {{name}} successfully assigned to this issue.
+    notice_successful_assignment: User %{name} successfully assigned to this issue.
     notice_confirm_assignment: Please confirm your user assignment below.
-    notice_unsuccessful_assignment: User {{name}} could not be assigned to this issue.
-    notice_add_memberships_success: User {{name}} was successfully added to this project.
-    notice_add_memberships_faiure: User {{name}} could not be added to this project.
+    notice_unsuccessful_assignment: User %{name} could not be assigned to this issue.
+    notice_add_memberships_success: User %{name} was successfully added to this project.
+    notice_add_memberships_faiure: User %{name} could not be added to this project.
     
     error_assignee_unqualified: The user selected is not qualified to be assigned to this issue
 
-    text_required_skill_remove_confirmation: Remove required skill '{{name}}' from this issue ?
-    text_user_skill_destroy_confirmation: Remove skill '{{name}}' from this user ?
-    text_skill_destroy_confirmation: Are you sure you want to delete the skill '{{name}}' ?
+    text_related_skill_remove_confirmation: Remove skill '%{name}' ?
+    text_user_skill_destroy_confirmation: Remove skill '%{name}' from this user ?
+    text_skill_destroy_confirmation: Are you sure you want to delete the skill '%{name}' ?
     text_no_user_skill_evaluations: This user currently has no skill evaluations
-    text_user_skill_addition: "{{skill}} added at level {{new_level}}"
-    text_user_skill_deletion: "{{skill}} removed (was level {{old_level}})"
-    text_user_skill_promotion: "{{skill}} promoted from level {{old_level}} to {{new_level}}"
-    text_user_skill_demotion: "{{skill}} demoted from level {{old_level}} to {{new_level}}"
+    text_user_skill_addition: "%{skill} added at level %{new_level}"
+    text_user_skill_deletion: "%{skill} removed (was level %{old_level})"
+    text_user_skill_promotion: "%{skill} promoted from level %{old_level} to %{new_level}"
+    text_user_skill_demotion: "%{skill} demoted from level %{old_level} to %{new_level}"
     text_enter_criteria_for_search: Please enter criteria for your search
     text_no_results_for_search: Your search returned no results
     text_add_skill_block: The assigned user is unqualified for the new skill requirement. If you wish to change the requirements, you must first unassign this user.

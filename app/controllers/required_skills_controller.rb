@@ -41,6 +41,19 @@ class RequiredSkillsController < ApplicationController
     refresh_required_skills
   end
 
+  def edit
+    @action = params[:related_skill][:action]
+    id = params[:related_skill][:id]
+    project_skill = RequiredSkill.find(id)
+    project_skill.level = params[:related_skill][:level].to_i
+    @related_skill = project_skill
+
+    if @related_skill.save
+      @related_skill = nil
+    end
+    refresh_required_skills
+  end
+
   def remove
     @required_skill = RequiredSkill.find(params[:id])
     @required_skill.destroy

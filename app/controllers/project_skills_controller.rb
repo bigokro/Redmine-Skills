@@ -14,7 +14,22 @@ class ProjectSkillsController < ApplicationController
       skill.save!
     end
     level = params[:related_skill][:level].to_i
-    @related_skill = ProjectSkill.new(:project => @project, :skill => skill, :level => level)
+    category_id = params[:related_skill][:category_id].to_i
+    category = IssueCategory.find_by_id(category_id)
+    @related_skill = ProjectSkill.new(:project => @project, :skill => skill, :issue_category => category, :level => level)
+
+    if @related_skill.save
+      @related_skill = nil
+    end
+    refresh_project_skills
+  end
+
+  def edit
+    @action = params[:related_skill][:action]
+    id = params[:related_skill][:id]
+    project_skill = ProjectSkill.find(id)
+    project_skill.level = params[:related_skill][:level].to_i
+    @related_skill = project_skill
 
     if @related_skill.save
       @related_skill = nil

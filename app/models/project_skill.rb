@@ -5,6 +5,7 @@
 class ProjectSkill  < ActiveRecord::Base
   belongs_to :project
   belongs_to :skill
+  belongs_to :issue_category
 
   validates_presence_of :project, :skill, :level
   
