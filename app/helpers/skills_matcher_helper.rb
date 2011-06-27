@@ -58,6 +58,7 @@ module SkillsMatcherHelper
   end
 
   def self.find_issues_by_filters filters, sort_criteria = nil, count_only = false
+    return [] if filters.empty?
     skill_ids = filters.reject{|f| f.skill.nil?}.collect{|f| f.skill.id}
     listable_status_ids = IssueStatus.all.collect{ |s| Setting['plugin_redmine_skills']['assignable_status_' + s.name.gsub(" ", "_").downcase] == "1" ? s.id : nil}.compact
     assignable_projects_condition = ''
@@ -185,6 +186,7 @@ module SkillsMatcherHelper
   # Uses the operator "<=" for each
   # TODO: implement filter for "no other skills (required)"
   def self.filters_for_user user
+    return [] if user.user_skills.empty?
     filters = user.user_skills.collect do |rs|
         f = SkillFilter.new
         f.skill = rs.skill
