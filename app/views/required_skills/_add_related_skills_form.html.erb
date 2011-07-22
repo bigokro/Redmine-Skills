@@ -65,7 +65,9 @@
 			:url => { :controller => controller, :action => "add"}, 
 			:html => { :id => "add-skill-form-#{category_id}", :style => (@related_skill ? '' : 'display: none;') }) do |rs| %>
 	<%= rs.hidden_field :related_id, :value => related_id %>
-	<%= rs.hidden_field :category_id, :value => category_id %>
+	<% if @related_skill.has_attribute?(category_id) %>
+	    <%= rs.hidden_field :category_id, :value => category_id %>
+	<% end %>
 	<%= rs.hidden_field :action, :value => "add" %>
 	<%= l(:label_skill) %>
 	<%= rs.text_field :name, :size => 20, :autocomplete => "off", :id => "related_skill_name-#{category_id}" %>
